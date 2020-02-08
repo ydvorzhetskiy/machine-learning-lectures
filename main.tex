@@ -1,0 +1,49 @@
+\documentclass[12pt]{article}
+
+\usepackage[T1,T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+
+\newtheorem{definition}{Определение}
+
+\title{Лекции по машинному обучению}
+\author{Игорь Чирков}
+\date{2020 г.}
+
+\begin{document}
+    \begin{titlepage}
+        \maketitle
+    \end{titlepage}
+
+    \begin{abstract}
+        Лекции по машинному обучению, прочитанные в Luxoft
+    \end{abstract}
+
+    \section{Введение в нейросети}\label{sec:введение-в-нейросети}
+
+    % TODO: встаивть определния из теории вероятности
+
+    Определим круг задач.
+    Наша задача - задача классификации.
+    Определение задачи классификации взято из
+    \href{https://en.wikipedia.org/wiki/Statistical_classification}{Википедии}.
+
+    \begin{definition}[Задача классификации]
+        Пусть дано множество $X$ $n$-мерных линейных векторов $X \ni \overline{x} = (x_1, \ldots, x_n)$,
+        $Y$~--- некоторое множество классов.
+        Существует неизвестная целевая зависимость~--- отображение $y^*: X\to Y$, значение которой известны только
+        на объектах конечной обучающей выборки $X^m \subset X \times Y$, $| X^m | = m$.
+
+        Требуется построить алгоритм $\alpha: X \to Y$, способный классифицировать произвольный объект
+        $x \in X$
+    \end{definition}
+
+    Несложно вывести, что достаточно решить задачу классификации только на два класса.
+
+    % TODO: вставить красивые графики классификации точек на плоскости
+
+    % TODO: Лекция 2
+
+    % TODO: Лекция 3
+\end{document}
