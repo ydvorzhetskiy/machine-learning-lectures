@@ -6,7 +6,6 @@
     <artifactId>java-sources</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>ML Lectures Java sources</name>
 
     <modules>
         <module>hello-world</module>
