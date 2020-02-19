@@ -120,10 +120,9 @@ public class HelloWorld {
         out.println("\nW-deltas");
         for (int i = 0; i < deltaws.length; i++) {
             out.println(format("\nset %d \n----------------", i));
-            val deltaw = deltaws[i];
-            out.println("H\tD");
-            for (int j = 0; j < deltaw.length; j++) {
-                out.println(format("%d\t%.2f", j + 1, deltaw[j]));
+            val dw = deltaws[i];
+            for (int j = 0; j < dw.length; j++) {
+                out.println(format("%d\t%.2f", j + 1, dw[j]));
             }
         }
     }
@@ -135,6 +134,7 @@ public class HelloWorld {
      * @return deltaw
      */
     private static double deltaw(final double grad, final double delta) {
+
         return EPSILON * grad + ALPHA * delta;
     }
 
