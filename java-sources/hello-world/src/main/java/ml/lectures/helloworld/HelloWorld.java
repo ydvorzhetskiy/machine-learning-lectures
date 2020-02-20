@@ -12,119 +12,107 @@ import static java.lang.System.out;
  */
 public class HelloWorld {
 
-    static final int[][] DATASET = {
-        {0, 0, 0},
-        {0, 1, 1},
-        {1, 1, 0},
-        {1, 0, 1}
-    };
-
     static final double EPSILON = 0.7;
     static final double ALPHA = 0.3;
 
     public static void main(String[] args) {
 
-        printDataset();
-
+        double[] deltas = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         double[] weights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3};
-        val hIns = new double[DATASET.length][2];
-        val hOuts = new double[DATASET.length][2];
-
-        val oIns = new double[DATASET.length];
-        val oOuts = new double[DATASET.length];
-        val errs = new double[DATASET.length];
-        val oDeltas = new double[DATASET.length];
-
-        for (int i = 0; i < DATASET.length; i++) {
-
-            hIns[i][0] = DATASET[i][0] * weights[0] + DATASET[i][1] * weights[2];
-            hIns[i][1] = DATASET[i][0] * weights[1] + DATASET[i][1] * weights[3];
-
-            hOuts[i][0] = sigmoid(hIns[i][0]);
-            hOuts[i][1] = sigmoid(hIns[i][1]);
-
-            oIns[i] = hOuts[i][0] * weights[4] + hOuts[i][0] * weights[5];
-            oOuts[i] = sigmoid(oIns[i]);
-            errs[i] = error(oOuts[i], DATASET[i][2]);
-            oDeltas[i] = odelta(oOuts[i], DATASET[i][2]);
+        int[][] dataset = {
+            {0, 0, 0},
+            {0, 1, 1},
+            {1, 1, 0},
+            {1, 0, 1}
+        };
+        dumpWeights(weights);
+        for (int i = 0; i < dataset.length; i++) {
+            doIteration(dataset[i], weights, deltas);
+            dumpWeights(weights);
         }
+    }
 
-        for (int i = 0; i < hIns.length; i++) {
-            out.println(format("\nset %d \n----------------", i));
-            val shIns = hIns[i];
-            val shOuts = hOuts[i];
-            out.println("H\tin\t\tout");
-            for (int j = 0; j < shIns.length; j++) {
-                out.println(format("%d\t%.2f\t%.2f", j + 1, shIns[j], shOuts[j]));
-            }
+    private static void dumpWeights(final double[] weights) {
+        out.println(format("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f",
+            weights[0], weights[1], weights[2],
+            weights[3], weights[4], weights[5]));
+    }
 
-            val soIn = oIns[i];
-            val soOut = oOuts[i];
+    private static void doIteration(final int[] set,
+                                    final double[] weights,
+                                    final double[] prevDeltas) {
 
-            out.println("\nO\tin\t\tout");
-            out.println(format("%d\t%.2f\t%.2f", 1 , soIn, soOut));
-            out.println(format("E\t%.2f", errs[i]));
-        }
+        val i1 = 0;
+        val i2 = 1;
+        val h1 = 2;
+        val h2 = 3;
+        val o1 = 4;
 
-        //calc o-deltas
-        for (int i = 0; i < DATASET.length; i++) {
-            oDeltas[i] = odelta(oOuts[i], DATASET[i][2]);
-        }
+        val outs = new double[5];
+        outs[i1] = set[0];
+        outs[i2] = set[1];
 
-        out.println("\nO-deltas");
-        for (int i = 0; i < hIns.length; i++) {
-            out.println(format("%d\t%.2f", i, oDeltas[i]));
-        }
+        val ideal = set[2];
 
-        //calc h-deltas
-        val hDeltas = new double[DATASET.length][2];
-        for (int i = 0; i < DATASET.length; i++) {
-            hDeltas[i][0] = hdelta(hOuts[i][0], new double[] { weights[4] }, new double[] { oDeltas[i] });
-            hDeltas[i][1] = hdelta(hOuts[i][1], new double[] { weights[5] }, new double[] { oDeltas[i] });
-        }
+        //weights
+        val w1 = 0;
+        val w2 = 1;
+        val w3 = 2;
+        val w4 = 3;
+        val w5 = 4;
+        val w6 = 5;
 
-        out.println("\nH-deltas");
-        for (int i = 0; i < hDeltas.length; i++) {
-            out.println(format("\nset %d \n----------------", i));
-            val hDelta = hDeltas[i];
-            out.println("H\tD");
-            for (int j = 0; j < hDelta.length; j++) {
-                out.println(format("%d\t%.2f", j + 1, hDelta[j]));
-            }
-        }
+        val inp = new double[5];
+        inp[h1] = outs[i1] * weights[w1] + outs[i2] * weights[w3];
+        inp[h2] = outs[i1] * weights[w2] + outs[i2] * weights[w4];
 
-        //calc gradients
-        val hGrads = new double[DATASET.length][2];
-        for (int i = 0; i < DATASET.length; i++) {
-            hGrads[i][0] = grad(hOuts[i][0], oDeltas[i]);
-            hGrads[i][1] = grad(hOuts[i][1], oDeltas[i]);
-        }
+        //H-outputs
+        outs[h1] = sigmoid(inp[h1]);
+        outs[h2] = sigmoid(inp[h2]);
 
-        out.println("\nH-gradients");
-        for (int i = 0; i < hDeltas.length; i++) {
-            out.println(format("\nset %d \n----------------", i));
-            val grads = hGrads[i];
-            out.println("H\tG");
-            for (int j = 0; j < grads.length; j++) {
-                out.println(format("%d\t%.2f", j + 1, grads[j]));
-            }
-        }
+        inp[o1] = outs[h1] * weights[w5] + outs[h2] * weights[w6];
+        outs[o1] = sigmoid(inp[o1]);
 
-        //calc deltas for weights
-        val deltaws = new double[DATASET.length][2];
-        for (int i = 0; i < DATASET.length; i++) {
-            deltaws[i][0] = deltaw(hGrads[i][0], 0);
-            deltaws[i][1] = deltaw(hGrads[i][1], 0);
-        }
+        val err = error(outs[o1], ideal);
+        val hdeltas = new double[5];
+        hdeltas[o1] = deltao(outs[o1], ideal);
+        hdeltas[h1] = deltah(outs[h1], weights[w5], hdeltas[o1]);
+        hdeltas[h2] = deltah(outs[h2], weights[w6], hdeltas[o1]);
 
-        out.println("\nW-deltas");
-        for (int i = 0; i < deltaws.length; i++) {
-            out.println(format("\nset %d \n----------------", i));
-            val dw = deltaws[i];
-            for (int j = 0; j < dw.length; j++) {
-                out.println(format("%d\t%.2f", j + 1, dw[j]));
-            }
-        }
+        val grads = new double[6];
+        grads[w5] = grad(outs[h1], hdeltas[o1]);
+        grads[w6] = grad(outs[h2], hdeltas[o1]);
+
+        val wdeltas = new double[6];
+        wdeltas[w5] = deltaw(grads[w5], 0.0);
+        weights[w5] = weights[w5] + wdeltas[w5];
+
+        wdeltas[w6] = deltaw(grads[w6], 0.0);
+        weights[w6] = weights[w6] + wdeltas[w5];
+
+        grads[w1] = grad(outs[i1], hdeltas[h1]);
+        grads[w2] = grad(outs[i1], hdeltas[h2]);
+        grads[w3] = grad(outs[i2], hdeltas[h1]);
+        grads[w4] = grad(outs[i2], hdeltas[h2]);
+
+        wdeltas[w1] = deltaw(grads[w1], prevDeltas[w1]);
+        wdeltas[w2] = deltaw(grads[w2], prevDeltas[w2]);
+        wdeltas[w3] = deltaw(grads[w3], prevDeltas[w3]);
+        wdeltas[w4] = deltaw(grads[w4], prevDeltas[w4]);
+
+        weights[w1] = weights[w1] + wdeltas[w1];
+        weights[w2] = weights[w2] + wdeltas[w2];
+        weights[w3] = weights[w3] + wdeltas[w3];
+        weights[w4] = weights[w4] + wdeltas[w4];
+
+        out.println(format("\nIDEAL:\t%d\tOUT:\t%.3f\tERROR\t%.3f", ideal, outs[o1], err));
+
+        prevDeltas[w1] = wdeltas[w1];
+        prevDeltas[w2] = wdeltas[w2];
+        prevDeltas[w3] = wdeltas[w3];
+        prevDeltas[w4] = wdeltas[w4];
+        prevDeltas[w5] = wdeltas[w5];
+        prevDeltas[w6] = wdeltas[w6];
     }
 
     /**
@@ -153,46 +141,38 @@ public class HelloWorld {
      * Delta for neuron:
      * H.delta = F'(IN) * SUM(Wi * OUT.delta)
      * F'(IN) = F.sigmoid = (1 - OUT) * OUT
-     * @param out - actual output
-     * @param weights - weights
+     * @param out - OUT
+     * @param weight - Wi
+     * @param delta - OUT.delta
      * @return delta for outputs
      */
-    private static double hdelta(final double out, final double[] weights, final double[] deltas) {
+    private static double deltah(final double out,
+                                 final double weight,
+                                 final double delta) {
 
-        double sum = 0;
-        for (int i = 0; i < weights.length; i++) {
-            sum += weights[i] * deltas[i];
-        }
-        return (1 - out) * out * sum;
+        return (1 - out) * out * (weight * delta);
     }
 
 
     /**
      * Delta for outputs:
      * OUT.delta = (OUT.ideal - OUT.actual) * F'(IN)
-     * F'(IN) = F.sigmoid = (1 - OUT) * OUT
-     * @param actual - actual output
-     * @param ideal - ideal output
+     * F'(IN) = F.sigmoid = (1 - OUT.actual) * OUT.actual
+     * @param actual - OUT.actual
+     * @param ideal - OUT.ideal
      * @return delta for outputs
      */
-    private static double odelta(final double actual, final double ideal) {
+    static double deltao(final double actual, final double ideal) {
 
         return (ideal - actual) * (1 - actual) * actual;
     }
 
-    private static double error(final double actual, final double ideal) {
+    static double error(final double actual, final double ideal) {
 
         return Math.pow(ideal - actual, 2);
     }
 
-    private static void printDataset() {
-
-        for (int[] i: DATASET) {
-            out.println(format("%d ^ %d = %d", i[0], i[1], i[2]));
-        }
-    }
-
-    public static double sigmoid(double x) {
+    static double sigmoid(double x) {
 
         return 1 / (1 + Math.pow(Math.E, (-1 * x)));
     }
