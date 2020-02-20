@@ -135,7 +135,7 @@ public class HelloWorld {
     private static double grad(final double out, final double delta) {
 
         return out * delta;
-    };
+    }
 
     /**
      * Delta for neuron:
@@ -152,7 +152,6 @@ public class HelloWorld {
 
         return (1 - out) * out * (weight * delta);
     }
-
 
     /**
      * Delta for outputs:
