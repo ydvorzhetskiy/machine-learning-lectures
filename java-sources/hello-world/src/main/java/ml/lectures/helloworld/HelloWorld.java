@@ -12,8 +12,34 @@ import static java.lang.System.out;
  */
 public class HelloWorld {
 
-    static final double EPSILON = 0.7;
-    static final double ALPHA = 0.3;
+    static final int VERTEX_CNT = 6;
+    private static class Model {
+        private double[] outputs = new double[VERTEX_CNT];
+        private double[] inputs = new double[VERTEX_CNT];
+//        outs[i1] = set[0];
+//        outs[i2] = set[1];
+//
+//        val ideal = set[2];
+//
+//        //weights
+//        val inp = new double[5];
+    };
+
+    static final double EPSILON = 0.3;
+    static final double ALPHA = 0.1;
+
+    static final int w1 = 0;
+    static final int w2 = 1;
+    static final int w3 = 2;
+    static final int w4 = 3;
+    static final int w5 = 4;
+    static final int w6 = 5;
+
+    static final int i1 = 0;
+    static final int i2 = 1;
+    static final int h1 = 2;
+    static final int h2 = 3;
+    static final int o1 = 4;
 
     public static void main(String[] args) {
 
@@ -26,9 +52,13 @@ public class HelloWorld {
             {1, 0, 1}
         };
         dumpWeights(weights);
-        for (int i = 0; i < dataset.length; i++) {
-            doIteration(dataset[i], weights, deltas);
-            dumpWeights(weights);
+        //loop for epoch
+        for (int e = 0; e < 2; e++) {
+            for (int i = 0; i < dataset.length; i++) {
+                doIteration(dataset[i], weights, deltas);
+                //summarize
+//                dumpWeights(weights);
+            }
         }
     }
 
@@ -42,12 +72,6 @@ public class HelloWorld {
                                     final double[] weights,
                                     final double[] prevDeltas) {
 
-        val i1 = 0;
-        val i2 = 1;
-        val h1 = 2;
-        val h2 = 3;
-        val o1 = 4;
-
         val outs = new double[5];
         outs[i1] = set[0];
         outs[i2] = set[1];
@@ -55,13 +79,6 @@ public class HelloWorld {
         val ideal = set[2];
 
         //weights
-        val w1 = 0;
-        val w2 = 1;
-        val w3 = 2;
-        val w4 = 3;
-        val w5 = 4;
-        val w6 = 5;
-
         val inp = new double[5];
         inp[h1] = outs[i1] * weights[w1] + outs[i2] * weights[w3];
         inp[h2] = outs[i1] * weights[w2] + outs[i2] * weights[w4];
@@ -73,9 +90,12 @@ public class HelloWorld {
         inp[o1] = outs[h1] * weights[w5] + outs[h2] * weights[w6];
         outs[o1] = sigmoid(inp[o1]);
 
-        val err = error(outs[o1], ideal);
+        val err = dev(outs[o1], ideal);
         val hdeltas = new double[5];
         hdeltas[o1] = deltao(outs[o1], ideal);
+
+
+        // move to upper level to summarize error and deltas
         hdeltas[h1] = deltah(outs[h1], weights[w5], hdeltas[o1]);
         hdeltas[h2] = deltah(outs[h2], weights[w6], hdeltas[o1]);
 
@@ -84,10 +104,10 @@ public class HelloWorld {
         grads[w6] = grad(outs[h2], hdeltas[o1]);
 
         val wdeltas = new double[6];
-        wdeltas[w5] = deltaw(grads[w5], 0.0);
+        wdeltas[w5] = deltaw(grads[w5], prevDeltas[w5]);
         weights[w5] = weights[w5] + wdeltas[w5];
 
-        wdeltas[w6] = deltaw(grads[w6], 0.0);
+        wdeltas[w6] = deltaw(grads[w6], prevDeltas[w6]);
         weights[w6] = weights[w6] + wdeltas[w5];
 
         grads[w1] = grad(outs[i1], hdeltas[h1]);
@@ -105,7 +125,7 @@ public class HelloWorld {
         weights[w3] = weights[w3] + wdeltas[w3];
         weights[w4] = weights[w4] + wdeltas[w4];
 
-        out.println(format("\nIDEAL:\t%d\tOUT:\t%.3f\tERROR\t%.3f", ideal, outs[o1], err));
+        out.println(format("IDEAL:\t%d\tOUT:\t%.3f\tERROR\t%.3f", ideal, outs[o1], err));
 
         prevDeltas[w1] = wdeltas[w1];
         prevDeltas[w2] = wdeltas[w2];
@@ -166,7 +186,7 @@ public class HelloWorld {
         return (ideal - actual) * (1 - actual) * actual;
     }
 
-    static double error(final double actual, final double ideal) {
+    static double dev(final double actual, final double ideal) {
 
         return Math.pow(ideal - actual, 2);
     }
