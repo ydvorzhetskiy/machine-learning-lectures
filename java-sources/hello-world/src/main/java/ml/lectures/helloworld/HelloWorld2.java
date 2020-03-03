@@ -32,7 +32,7 @@ public class HelloWorld2 {
     static final int o1 = 4;
     static final int b1 = 5;
     public static final double[] INITIAL_WEIGHTS = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2, 0.1};
-    public static final int EPOCHS = 40_000;
+    public static final int EPOCHS = 20_000;
 
     public static void main(String[] args) {
 
@@ -59,12 +59,15 @@ public class HelloWorld2 {
 
         double[] weights = teach(xorset, EPOCHS);
         checkResults("XOR", weights, xorset);
+        dumpWeights(weights);
 
         weights = teach(orset, EPOCHS);
         checkResults("OR", weights, orset);
+        dumpWeights(weights);
 
         weights = teach(andset, EPOCHS);
         checkResults("AND", weights, andset);
+        dumpWeights(weights);
     }
 
     private static double[] teach(final int[][] xorset, final int epochs) {
