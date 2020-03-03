@@ -14,8 +14,8 @@ import static java.lang.System.out;
 public class HelloWorld2 {
 
     static final int VERTEX_CNT = 7;
-    static double EPSILON = 0.1;
-    static double ALPHA = 1.1;
+    static double epsilon = 0.1;
+    static double alpha = 1.1;
 
     static final int w1 = 0;
     static final int w2 = 1;
@@ -32,54 +32,67 @@ public class HelloWorld2 {
     static final int h2 = 3;
     static final int o1 = 4;
     static final int b1 = 5;
-    public static final double[] INITIAL_WEIGHTS = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
-    public static final int EPOCHS = 20_000;
+    public static double[] initialWeights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+    public static int epochs = 4_000;
 
     public static void main(String[] args) {
 
-        int[][] xorset = {
+        teachXors();
+        teachOrs();
+        teachAnds();
+    }
+
+    private static void teachAnds() {
+
+        epochs = 4_000;
+        epsilon = 0.4;
+        alpha = 0.6;
+        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+        int[][] set = {
+            {0, 0, 0 & 0},
+            {0, 1, 0 & 1},
+            {1, 1, 1 & 1},
+            {1, 0, 1 & 0}
+        };
+        double[] weights = teach(set);
+        checkResults("AND", weights, set);
+        dumpWeights(weights);
+    }
+
+    private static void teachOrs() {
+        epochs = 4_000;
+        epsilon = 0.1;
+        alpha = 1.1;
+        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+        int[][] set = {
+            {0, 0, 0 | 0},
+            {0, 1, 0 | 1},
+            {1, 1, 1 | 1},
+            {1, 0, 1 | 0}
+        };
+        double[] weights = teach(set);
+        checkResults("OR", weights, set);
+        dumpWeights(weights);
+    }
+
+    private static void teachXors() {
+        epochs = 4_000;
+        epsilon = 1.3;
+        alpha = 1.1;
+        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+        int[][] set = {
             {0, 0, 0 ^ 0},
             {0, 1, 0 ^ 1},
             {1, 1, 1 ^ 1},
             {1, 0, 1 ^ 0}
         };
 
-        int[][] orset = {
-            {0, 0, 0 | 0},
-            {0, 1, 0 | 1},
-            {1, 1, 1 | 1},
-            {1, 0, 1 | 0}
-        };
-
-        int[][] andset = {
-            {0, 0, 0 & 0},
-            {0, 1, 0 & 1},
-            {1, 1, 1 & 1},
-            {1, 0, 1 & 0}
-        };
-
-        EPSILON = 1.3;
-        ALPHA = 1.1;
-        double[] weights = teach(xorset, EPOCHS, INITIAL_WEIGHTS);
-        checkResults("XOR", weights, xorset);
-        dumpWeights(weights);
-
-        EPSILON = 0.1;
-        ALPHA = 1.1;
-        weights = teach(orset, EPOCHS, INITIAL_WEIGHTS);
-        checkResults("OR", weights, orset);
-        dumpWeights(weights);
-
-        EPSILON = 0.4;
-        ALPHA = 0.6;
-        weights = teach(andset, EPOCHS, INITIAL_WEIGHTS);
-        checkResults("AND", weights, andset);
+        double[] weights = teach(set);
+        checkResults("XOR", weights, set);
         dumpWeights(weights);
     }
 
-    private static double[] teach(final int[][] set,
-                                  final int epochs,
-                                  final double[] initialWeights) {
+    private static double[] teach(final int[][] set) {
 
         double[] weights = new double[initialWeights.length];
         arraycopy(initialWeights, 0, weights, 0, initialWeights.length);
@@ -174,7 +187,7 @@ public class HelloWorld2 {
      */
     private static double deltaw(final double grad, final double delta) {
 
-        return EPSILON * grad + ALPHA * delta;
+        return epsilon * grad + alpha * delta;
     }
 
     /**
