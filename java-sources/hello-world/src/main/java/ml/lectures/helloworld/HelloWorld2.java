@@ -32,7 +32,7 @@ public class HelloWorld2 {
     static final int o1 = 4;
     static final int b1 = 5;
     public static final double[] INITIAL_WEIGHTS = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2, 0.1};
-    public static final int EPOCHS = 400_000;
+    public static final int EPOCHS = 40_000;
 
     public static void main(String[] args) {
 
@@ -206,7 +206,7 @@ public class HelloWorld2 {
 
     static double error(final double actual, final double ideal) {
 
-        return Math.pow(ideal - actual, 2) / 2.;
+        return Math.pow(ideal - actual, 2);
     }
 
     static double sigmoid(double x) {
