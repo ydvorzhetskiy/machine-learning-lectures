@@ -15,8 +15,8 @@ public class HelloWorld2 {
     static final int VERTEX_CNT = 7;
     static final int W_CNT = 9;
 
-    static final double EPSILON = 0.7;
-    static final double ALPHA = 0.3;
+    static final double EPSILON = 0.1;
+    static final double ALPHA = 1.1;
 
     static final int w1 = 0;
     static final int w2 = 1;
@@ -46,15 +46,15 @@ public class HelloWorld2 {
         };
         dumpWeights(weights);
 //        val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-        for (int e = 0; e < 400000; e++) {
-            double error = 0;
+        for (int e = 0; e < 4_000_000; e++) {
+//            double error = 0;
             val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
             for (int i = 0; i < trainset.length; i++) {
                 val outputs = new double[VERTEX_CNT];
                 outputs[b1] = 1;
                 val ideal = trainset[i][2];
                 passForward(trainset[i], weights, outputs);
-                error += error(outputs[o1], ideal);
+//                error += error(outputs[o1], ideal);
                 passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
             }
 //            passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
@@ -62,10 +62,10 @@ public class HelloWorld2 {
                 weights[i] = weights[i] + deltas[i];
             }
 
-            if (e % 10000 == 0) {
-                out.println("error: " + error);
-                dumpWeights(weights);
-            }
+//            if (e % 10000 == 0) {
+//                out.println("error: " + error);
+//                dumpWeights(weights);
+//            }
         }
         //test weights
         out.println("\nResults");
@@ -75,7 +75,7 @@ public class HelloWorld2 {
             val ideal = trainset[i][2];
             passForward(trainset[i], weights, outputs);
             val error = error(outputs[o1], ideal);
-            out.println(format("%d\t%d\t%d\t%.3f\t%.3f",
+            out.println(format("%d\t%d\t%d\t%.8f\t%.8f",
                 trainset[i][0], trainset[i][1], ideal, outputs[o1], error
                 )
             );
