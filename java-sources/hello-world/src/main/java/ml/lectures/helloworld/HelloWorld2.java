@@ -33,7 +33,7 @@ public class HelloWorld2 {
     static final int o1 = 4;
     static final int b1 = 5;
     public static double[] initialWeights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
-    public static int epochs = 4_000;
+    public static int epochs = 40_000;
 
     public static void main(String[] args) {
 
@@ -44,7 +44,7 @@ public class HelloWorld2 {
 
     private static void teachAnds() {
 
-        epochs = 4_000;
+//        epochs = 4_000;
         epsilon = 0.4;
         alpha = 0.6;
         initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
@@ -60,7 +60,7 @@ public class HelloWorld2 {
     }
 
     private static void teachOrs() {
-        epochs = 4_000;
+//        epochs = 4_000;
         epsilon = 0.1;
         alpha = 1.1;
         initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
@@ -76,7 +76,7 @@ public class HelloWorld2 {
     }
 
     private static void teachXors() {
-        epochs = 4_000;
+//        epochs = 4_000;
         epsilon = 1.3;
         alpha = 1.1;
         initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
