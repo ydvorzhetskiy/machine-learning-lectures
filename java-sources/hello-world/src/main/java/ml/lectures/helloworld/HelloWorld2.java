@@ -96,11 +96,11 @@ public class HelloWorld2 {
     private static void teachEpoch(final double[] weights, final int[][] set) {
 
         val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-        for (int i = 0; i < set.length; i++) {
+        for (final int[] ints : set) {
             val outputs = new double[VERTEX_CNT];
             outputs[b1] = 1;
-            val ideal = set[i][2];
-            passForward(set[i], weights, outputs);
+            val ideal = ints[2];
+            passForward(ints, weights, outputs);
             passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
         }
         for (int i = w1; i <= w8; i++) {
@@ -115,7 +115,6 @@ public class HelloWorld2 {
 
         deltas[w5] = deltaw(grad(outputs[h1], deltao), deltas[w5]);
         deltas[w6] = deltaw(grad(outputs[h2], deltao), deltas[w6]);
-//        deltas[w9] = deltaw(grad(outputs[b1], deltao), deltas[w9]);
 
         val deltaH1 = deltah(outputs[h1], weights[w5], deltao);
         val deltaH2 = deltah(outputs[h2], weights[w6], deltao);
