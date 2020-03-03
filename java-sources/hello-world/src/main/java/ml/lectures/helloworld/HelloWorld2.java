@@ -3,6 +3,7 @@ package ml.lectures.helloworld;
 import lombok.val;
 
 import static java.lang.String.format;
+import static java.lang.System.arraycopy;
 import static java.lang.System.out;
 
 /**
@@ -13,8 +14,8 @@ import static java.lang.System.out;
 public class HelloWorld2 {
 
     static final int VERTEX_CNT = 7;
-    static final double EPSILON = 0.1;
-    static final double ALPHA = 1.1;
+    static double EPSILON = 0.1;
+    static double ALPHA = 1.1;
 
     static final int w1 = 0;
     static final int w2 = 1;
@@ -31,7 +32,7 @@ public class HelloWorld2 {
     static final int h2 = 3;
     static final int o1 = 4;
     static final int b1 = 5;
-    public static final double[] INITIAL_WEIGHTS = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2, 0.1};
+    public static final double[] INITIAL_WEIGHTS = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
     public static final int EPOCHS = 20_000;
 
     public static void main(String[] args) {
@@ -57,39 +58,45 @@ public class HelloWorld2 {
             {1, 0, 1 & 0}
         };
 
-        double[] weights = teach(xorset, EPOCHS);
+        double[] weights = teach(xorset, EPOCHS, INITIAL_WEIGHTS);
         checkResults("XOR", weights, xorset);
         dumpWeights(weights);
 
-        weights = teach(orset, EPOCHS);
+        weights = teach(orset, EPOCHS, INITIAL_WEIGHTS);
         checkResults("OR", weights, orset);
         dumpWeights(weights);
 
-        weights = teach(andset, EPOCHS);
+        EPSILON = 0.4;
+        ALPHA = 0.6;
+        weights = teach(andset, EPOCHS, INITIAL_WEIGHTS);
         checkResults("AND", weights, andset);
         dumpWeights(weights);
     }
 
-    private static double[] teach(final int[][] xorset, final int epochs) {
-        double[] weights = INITIAL_WEIGHTS;
+    private static double[] teach(final int[][] set,
+                                  final int epochs,
+                                  final double[] initialWeights) {
+
+        double[] weights = new double[initialWeights.length];
+        arraycopy(initialWeights, 0, weights, 0, initialWeights.length);
         for (int i = 0; i < epochs; i++) {
-            teachEpoch(weights, xorset);
+            teachEpoch(weights, set);
         }
         return weights;
     }
 
-    private static void checkResults(final String op, final double[] weights, final int[][] xorset) {
-        out.println("\nResults for " + op);
-        for (int i = 0; i < xorset.length; i++) {
+    private static void checkResults(final String op, final double[] weights, final int[][] set) {
+
+        out.println("\nresults for " + op);
+        for (int i = 0; i < set.length; i++) {
             val outputs = new double[VERTEX_CNT];
             outputs[b1] = 1;
-            val ideal = xorset[i][2];
-            passForward(xorset[i], weights, outputs);
+            val ideal = set[i][2];
+            passForward(set[i], weights, outputs);
             val error = error(outputs[o1], ideal);
+
             out.println(format("%d\t%d\t%d\t%.3f\t%.3f",
-                xorset[i][0], xorset[i][1], ideal, outputs[o1], error
-                )
-            );
+                set[i][0], set[i][1], ideal, outputs[o1], error));
         }
     }
 
