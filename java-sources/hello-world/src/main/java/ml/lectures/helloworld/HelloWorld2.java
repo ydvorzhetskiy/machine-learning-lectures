@@ -12,21 +12,11 @@ import static java.lang.System.out;
  */
 public class HelloWorld2 {
 
-    static final int VERTEX_CNT = 5;
-    private static class Model {
-        private double[] outputs = new double[VERTEX_CNT];
-//        private double[] inputs = new double[VERTEX_CNT];
-//        outs[i1] = set[0];
-//        outs[i2] = set[1];
-//
-//        val ideal = set[2];
-//
-//        //weights
-//        val inp = new double[5];
-    };
+    static final int VERTEX_CNT = 7;
+    static final int W_CNT = 9;
 
-    static final double EPSILON = 0.3;
-    static final double ALPHA = 0.1;
+    static final double EPSILON = 0.7;
+    static final double ALPHA = 0.3;
 
     static final int w1 = 0;
     static final int w2 = 1;
@@ -34,17 +24,20 @@ public class HelloWorld2 {
     static final int w4 = 3;
     static final int w5 = 4;
     static final int w6 = 5;
+    static final int w7 = 6;
+    static final int w8 = 7;
+//    static final int w9 = 8;
 
     static final int i1 = 0;
     static final int i2 = 1;
     static final int h1 = 2;
     static final int h2 = 3;
     static final int o1 = 4;
+    static final int b1 = 5;
 
     public static void main(String[] args) {
 
-        double[] deltas = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-        double[] weights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3};
+        double[] weights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2, 0.1};
         int[][] trainset = {
             {0, 0, 0},
             {0, 1, 1},
@@ -52,38 +45,79 @@ public class HelloWorld2 {
             {1, 0, 1}
         };
         dumpWeights(weights);
-        //loop for epoch
-        for (int e = 0; e < 2; e++) {
+//        val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        for (int e = 0; e < 400000; e++) {
             double error = 0;
+            val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
             for (int i = 0; i < trainset.length; i++) {
                 val outputs = new double[VERTEX_CNT];
+                outputs[b1] = 1;
+                val ideal = trainset[i][2];
                 passForward(trainset[i], weights, outputs);
-                error += error(outputs[o1], trainset[i][2]);
-
-                //summarize
-//                dumpWeights(weights);
+                error += error(outputs[o1], ideal);
+                passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
             }
+//            passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
+            for (int i = w1; i <= w8; i++) {
+                weights[i] = weights[i] + deltas[i];
+            }
+
+            if (e % 10000 == 0) {
+                out.println("error: " + error);
+                dumpWeights(weights);
+            }
+        }
+        //test weights
+        out.println("\nResults");
+        for (int i = 0; i < trainset.length; i++) {
+            val outputs = new double[VERTEX_CNT];
+            outputs[b1] = 1;
+            val ideal = trainset[i][2];
+            passForward(trainset[i], weights, outputs);
+            val error = error(outputs[o1], ideal);
+            out.println(format("%d\t%d\t%d\t%.3f\t%.3f",
+                trainset[i][0], trainset[i][1], ideal, outputs[o1], error
+                )
+            );
         }
     }
 
+    private static void passBackward(final double[] weights,
+                                     final double[] deltas,
+                                     final double[] outputs,
+                                     final double deltao) {
+
+        deltas[w5] = deltaw(grad(outputs[h1], deltao), deltas[w5]);
+        deltas[w6] = deltaw(grad(outputs[h2], deltao), deltas[w6]);
+//        deltas[w9] = deltaw(grad(outputs[b1], deltao), deltas[w9]);
+
+        val deltaH1 = deltah(outputs[h1], weights[w5], deltao);
+        val deltaH2 = deltah(outputs[h2], weights[w6], deltao);
+
+        //h1
+        deltas[w1] = deltaw(grad(outputs[i1], deltaH1), deltas[w1]);
+        deltas[w3] = deltaw(grad(outputs[i2], deltaH1), deltas[w3]);
+        deltas[w8] = deltaw(grad(outputs[b1], deltaH1), deltas[w8]);
+
+        //h2
+        deltas[w2] = deltaw(grad(outputs[i1], deltaH2), deltas[w2]);
+        deltas[w4] = deltaw(grad(outputs[i2], deltaH2), deltas[w4]);
+        deltas[w7] = deltaw(grad(outputs[b1], deltaH2), deltas[w7]);
+    }
+
     private static void dumpWeights(final double[] weights) {
-        out.println(format("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f",
-            weights[0], weights[1], weights[2],
-            weights[3], weights[4], weights[5]));
+        out.println(format("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f",
+            weights[w1], weights[w2], weights[w3],
+            weights[w4], weights[w5], weights[w6], weights[w7], weights[w8])
+        );
     }
 
     private static void passForward(final int[] set,
                                     final double[] weights,
-//                                    final double[] prevDeltas
                                     final double[] outputs) {
 
-//        val outs = new double[5];
         outputs[i1] = set[0];
         outputs[i2] = set[1];
-
-//        val ideal = set[2];
-
-        //weights
         val inp = new double[5];
         inp[h1] = outputs[i1] * weights[w1] + set[1] * weights[w3];
         inp[h2] = outputs[i1] * weights[w2] + set[1] * weights[w4];
@@ -94,53 +128,6 @@ public class HelloWorld2 {
 
         inp[o1] = outputs[h1] * weights[w5] + outputs[h2] * weights[w6];
         outputs[o1] = sigmoid(inp[o1]);
-
-        /*
-        val err = dev(outs[o1], ideal);
-        val hdeltas = new double[5];
-        hdeltas[o1] = deltao(outs[o1], ideal);
-
-
-        // move to upper level to summarize error and deltas
-        hdeltas[h1] = deltah(outs[h1], weights[w5], hdeltas[o1]);
-        hdeltas[h2] = deltah(outs[h2], weights[w6], hdeltas[o1]);
-
-        val grads = new double[6];
-        grads[w5] = grad(outs[h1], hdeltas[o1]);
-        grads[w6] = grad(outs[h2], hdeltas[o1]);
-
-        val wdeltas = new double[6];
-        wdeltas[w5] = deltaw(grads[w5], prevDeltas[w5]);
-        weights[w5] = weights[w5] + wdeltas[w5];
-
-        wdeltas[w6] = deltaw(grads[w6], prevDeltas[w6]);
-        weights[w6] = weights[w6] + wdeltas[w5];
-
-        grads[w1] = grad(outs[i1], hdeltas[h1]);
-        grads[w2] = grad(outs[i1], hdeltas[h2]);
-        grads[w3] = grad(outs[i2], hdeltas[h1]);
-        grads[w4] = grad(outs[i2], hdeltas[h2]);
-
-        wdeltas[w1] = deltaw(grads[w1], prevDeltas[w1]);
-        wdeltas[w2] = deltaw(grads[w2], prevDeltas[w2]);
-        wdeltas[w3] = deltaw(grads[w3], prevDeltas[w3]);
-        wdeltas[w4] = deltaw(grads[w4], prevDeltas[w4]);
-
-        weights[w1] = weights[w1] + wdeltas[w1];
-        weights[w2] = weights[w2] + wdeltas[w2];
-        weights[w3] = weights[w3] + wdeltas[w3];
-        weights[w4] = weights[w4] + wdeltas[w4];
-
-        out.println(format("IDEAL:\t%d\tOUT:\t%.3f\tERROR\t%.3f", ideal, outs[o1], err));
-
-        prevDeltas[w1] = wdeltas[w1];
-        prevDeltas[w2] = wdeltas[w2];
-        prevDeltas[w3] = wdeltas[w3];
-        prevDeltas[w4] = wdeltas[w4];
-        prevDeltas[w5] = wdeltas[w5];
-        prevDeltas[w6] = wdeltas[w6];
-
-       */
     }
 
     /**
