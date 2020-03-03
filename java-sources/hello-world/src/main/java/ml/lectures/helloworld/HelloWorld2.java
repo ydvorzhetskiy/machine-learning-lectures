@@ -13,8 +13,6 @@ import static java.lang.System.out;
 public class HelloWorld2 {
 
     static final int VERTEX_CNT = 7;
-    static final int W_CNT = 9;
-
     static final double EPSILON = 0.1;
     static final double ALPHA = 1.1;
 
@@ -26,7 +24,6 @@ public class HelloWorld2 {
     static final int w6 = 5;
     static final int w7 = 6;
     static final int w8 = 7;
-//    static final int w9 = 8;
 
     static final int i1 = 0;
     static final int i2 = 1;
@@ -35,9 +32,9 @@ public class HelloWorld2 {
     static final int o1 = 4;
     static final int b1 = 5;
     public static final double[] INITIAL_WEIGHTS = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2, 0.1};
+    public static final int EPOCHS = 400_000;
 
     public static void main(String[] args) {
-
 
         int[][] xorset = {
             {0, 0, 0 ^ 0},
@@ -60,14 +57,14 @@ public class HelloWorld2 {
             {1, 0, 1 & 0}
         };
 
-        double[] weights = teach(xorset, 40_000);
+        double[] weights = teach(xorset, EPOCHS);
         checkResults("XOR", weights, xorset);
 
-        weights = teach(orset, 40_000);
-        checkResults("OR", weights, xorset);
+        weights = teach(orset, EPOCHS);
+        checkResults("OR", weights, orset);
 
-        weights = teach(andset, 40_000);
-        checkResults("AND", weights, xorset);
+        weights = teach(andset, EPOCHS);
+        checkResults("AND", weights, andset);
     }
 
     private static double[] teach(final int[][] xorset, final int epochs) {
