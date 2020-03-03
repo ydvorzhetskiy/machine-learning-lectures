@@ -211,7 +211,7 @@ public class HelloWorld2 {
         return Math.pow(ideal - actual, 2);
     }
 
-    static double sigmoid(double x) {
+    static double sigmoid(final double x) {
 
         return 1 / (1 + Math.pow(Math.E, (-1 * x)));
     }
