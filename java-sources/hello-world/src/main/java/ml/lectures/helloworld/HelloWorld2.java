@@ -34,51 +34,77 @@ public class HelloWorld2 {
     static final int h2 = 3;
     static final int o1 = 4;
     static final int b1 = 5;
+    public static final double[] INITIAL_WEIGHTS = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2, 0.1};
 
     public static void main(String[] args) {
 
-        double[] weights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2, 0.1};
-        int[][] trainset = {
-            {0, 0, 0},
-            {0, 1, 1},
-            {1, 1, 0},
-            {1, 0, 1}
-        };
-        dumpWeights(weights);
-//        val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-        for (int e = 0; e < 4_000_000; e++) {
-//            double error = 0;
-            val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-            for (int i = 0; i < trainset.length; i++) {
-                val outputs = new double[VERTEX_CNT];
-                outputs[b1] = 1;
-                val ideal = trainset[i][2];
-                passForward(trainset[i], weights, outputs);
-//                error += error(outputs[o1], ideal);
-                passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
-            }
-//            passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
-            for (int i = w1; i <= w8; i++) {
-                weights[i] = weights[i] + deltas[i];
-            }
 
-//            if (e % 10000 == 0) {
-//                out.println("error: " + error);
-//                dumpWeights(weights);
-//            }
+        int[][] xorset = {
+            {0, 0, 0 ^ 0},
+            {0, 1, 0 ^ 1},
+            {1, 1, 1 ^ 1},
+            {1, 0, 1 ^ 0}
+        };
+
+        int[][] orset = {
+            {0, 0, 0 | 0},
+            {0, 1, 0 | 1},
+            {1, 1, 1 | 1},
+            {1, 0, 1 | 0}
+        };
+
+        int[][] andset = {
+            {0, 0, 0 & 0},
+            {0, 1, 0 & 1},
+            {1, 1, 1 & 1},
+            {1, 0, 1 & 0}
+        };
+
+        double[] weights = teach(xorset, 40_000);
+        checkResults("XOR", weights, xorset);
+
+        weights = teach(orset, 40_000);
+        checkResults("OR", weights, xorset);
+
+        weights = teach(andset, 40_000);
+        checkResults("AND", weights, xorset);
+    }
+
+    private static double[] teach(final int[][] xorset, final int epochs) {
+        double[] weights = INITIAL_WEIGHTS;
+        for (int i = 0; i < epochs; i++) {
+            teachEpoch(weights, xorset);
         }
-        //test weights
-        out.println("\nResults");
-        for (int i = 0; i < trainset.length; i++) {
+        return weights;
+    }
+
+    private static void checkResults(final String op, final double[] weights, final int[][] xorset) {
+        out.println("\nResults for " + op);
+        for (int i = 0; i < xorset.length; i++) {
             val outputs = new double[VERTEX_CNT];
             outputs[b1] = 1;
-            val ideal = trainset[i][2];
-            passForward(trainset[i], weights, outputs);
+            val ideal = xorset[i][2];
+            passForward(xorset[i], weights, outputs);
             val error = error(outputs[o1], ideal);
-            out.println(format("%d\t%d\t%d\t%.8f\t%.8f",
-                trainset[i][0], trainset[i][1], ideal, outputs[o1], error
+            out.println(format("%d\t%d\t%d\t%.3f\t%.3f",
+                xorset[i][0], xorset[i][1], ideal, outputs[o1], error
                 )
             );
+        }
+    }
+
+    private static void teachEpoch(final double[] weights, final int[][] set) {
+
+        val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        for (int i = 0; i < set.length; i++) {
+            val outputs = new double[VERTEX_CNT];
+            outputs[b1] = 1;
+            val ideal = set[i][2];
+            passForward(set[i], weights, outputs);
+            passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
+        }
+        for (int i = w1; i <= w8; i++) {
+            weights[i] = weights[i] + deltas[i];
         }
     }
 
