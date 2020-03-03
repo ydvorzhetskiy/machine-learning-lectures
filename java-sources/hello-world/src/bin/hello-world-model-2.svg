@@ -155,7 +155,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.96942615"
      inkscape:cx="262.59949"
-     inkscape:cy="766.53798"
+     inkscape:cy="315.82988"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -181,12 +181,12 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#ececec;stroke:#000000;stroke-width:0.26499999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ececec;stroke:#000000;stroke-width:0.32501668;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect5290"
-       width="197.3268"
-       height="190.23067"
-       x="5.1856279"
-       y="6.6048355" />
+       width="197.26678"
+       height="286.24124"
+       x="5.2156363"
+       y="6.6348438" />
     <ellipse
        id="path3713"
        cx="40.141731"
@@ -426,5 +426,51 @@
          x="129.12674"
          y="128.43588"
          style="stroke-width:0.26458332">W8</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="13.100533"
+       y="167.08638"
+       id="text5938"><tspan
+         sodipodi:role="line"
+         id="tspan5936"
+         x="13.100533"
+         y="167.08638"
+         style="stroke-width:0.26458332">W1=0.5</tspan><tspan
+         sodipodi:role="line"
+         x="13.100533"
+         y="180.31555"
+         style="stroke-width:0.26458332"
+         id="tspan5940">W2=0.3</tspan><tspan
+         sodipodi:role="line"
+         x="13.100533"
+         y="193.54471"
+         style="stroke-width:0.26458332"
+         id="tspan5942">W3=-0.5</tspan><tspan
+         sodipodi:role="line"
+         x="13.100533"
+         y="206.77388"
+         style="stroke-width:0.26458332"
+         id="tspan5944">W4=0.5</tspan><tspan
+         sodipodi:role="line"
+         x="13.100533"
+         y="220.00305"
+         style="stroke-width:0.26458332"
+         id="tspan5946">W5=0.2</tspan><tspan
+         sodipodi:role="line"
+         x="13.100533"
+         y="233.23221"
+         style="stroke-width:0.26458332"
+         id="tspan5948">W6=0.3</tspan><tspan
+         sodipodi:role="line"
+         x="13.100533"
+         y="246.46138"
+         style="stroke-width:0.26458332"
+         id="tspan5950">W7=0.2</tspan><tspan
+         sodipodi:role="line"
+         x="13.100533"
+         y="259.69055"
+         style="stroke-width:0.26458332"
+         id="tspan5952">W8=-0.2</tspan></text>
   </g>
 </svg>
