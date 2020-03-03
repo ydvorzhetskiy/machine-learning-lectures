@@ -58,10 +58,14 @@ public class HelloWorld2 {
             {1, 0, 1 & 0}
         };
 
+        EPSILON = 1.3;
+        ALPHA = 1.1;
         double[] weights = teach(xorset, EPOCHS, INITIAL_WEIGHTS);
         checkResults("XOR", weights, xorset);
         dumpWeights(weights);
 
+        EPSILON = 0.1;
+        ALPHA = 1.1;
         weights = teach(orset, EPOCHS, INITIAL_WEIGHTS);
         checkResults("OR", weights, orset);
         dumpWeights(weights);
