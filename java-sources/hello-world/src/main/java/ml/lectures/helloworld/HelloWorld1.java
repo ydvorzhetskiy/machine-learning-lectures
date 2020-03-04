@@ -7,11 +7,11 @@ import static java.lang.System.arraycopy;
 import static java.lang.System.out;
 
 /**
- * HelloWord with displacement neuron
+ * HelloWord without displacement neuron
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class HelloWorld2 {
+public class HelloWorld1 {
 
     static final int VERTEX_CNT = 7;
     static double epsilon = 0.1;
@@ -23,8 +23,6 @@ public class HelloWorld2 {
     static final int w4 = 3;
     static final int w5 = 4;
     static final int w6 = 5;
-    static final int w7 = 6;
-    static final int w8 = 7;
 
     static final int i1 = 0;
     static final int i2 = 1;
@@ -32,7 +30,7 @@ public class HelloWorld2 {
     static final int h2 = 3;
     static final int o1 = 4;
     static final int b1 = 5;
-    public static double[] initialWeights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+    public static double[] initialWeights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2};
     public static int epochs = 10000;
 
     public static void main(String[] args) {
@@ -47,7 +45,7 @@ public class HelloWorld2 {
 //        epochs = 4_000;
         epsilon = 0.4;
         alpha = 0.6;
-        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3};
         int[][] set = {
             {0, 0, 0 & 0},
             {0, 1, 0 & 1},
@@ -63,7 +61,7 @@ public class HelloWorld2 {
 //        epochs = 4_000;
         epsilon = 0.1;
         alpha = 1.1;
-        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3};
         int[][] set = {
             {0, 0, 0 | 0},
             {0, 1, 0 | 1},
@@ -79,7 +77,7 @@ public class HelloWorld2 {
 //        epochs = 4_000;
         epsilon = 1.3;
         alpha = 1.1;
-        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3};
         int[][] set = {
             {0, 0, 0 ^ 0},
             {0, 1, 0 ^ 1},
@@ -119,7 +117,7 @@ public class HelloWorld2 {
 
     private static void teachEpoch(final double[] weights, final int[][] set) {
 
-        val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         for (final int[] ints : set) {
             val outputs = new double[VERTEX_CNT];
             outputs[b1] = 1;
@@ -127,7 +125,7 @@ public class HelloWorld2 {
             passForward(ints, weights, outputs);
             passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
         }
-        for (int i = w1; i <= w8; i++) {
+        for (int i = w1; i <= w6; i++) {
             weights[i] = weights[i] + deltas[i];
         }
     }
@@ -146,18 +144,16 @@ public class HelloWorld2 {
         //h1
         deltas[w1] = deltaw(grad(outputs[i1], deltaH1), deltas[w1]);
         deltas[w3] = deltaw(grad(outputs[i2], deltaH1), deltas[w3]);
-        deltas[w8] = deltaw(grad(outputs[b1], deltaH1), deltas[w8]);
 
         //h2
         deltas[w2] = deltaw(grad(outputs[i1], deltaH2), deltas[w2]);
         deltas[w4] = deltaw(grad(outputs[i2], deltaH2), deltas[w4]);
-        deltas[w7] = deltaw(grad(outputs[b1], deltaH2), deltas[w7]);
     }
 
     private static void dumpWeights(final double[] weights) {
-        out.println(format("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f",
+        out.println(format("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f",
             weights[w1], weights[w2], weights[w3],
-            weights[w4], weights[w5], weights[w6], weights[w7], weights[w8])
+            weights[w4], weights[w5], weights[w6])
         );
     }
 
