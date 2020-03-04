@@ -14,8 +14,8 @@ import static java.lang.System.out;
 public class LMachineI2H2O1 {
 
     static final int VERTEX_CNT = 7;
-    static double epsilon = 0.1;
-    static double alpha = 1.1;
+    private final double epsilon; //= 0.1;
+    private final double alpha; // = 1.1;
 
     static final int w1 = 0;
     static final int w2 = 1;
@@ -33,6 +33,10 @@ public class LMachineI2H2O1 {
     static final int o1 = 4;
     static final int b1 = 5;
 
+    public LMachineI2H2O1(final double epsilon, final double alpha) {
+        this.epsilon = epsilon;
+        this.alpha = alpha;
+    }
 
     public double[] teach(final double[][] set,
                           final double[] initialWeights,
@@ -60,7 +64,7 @@ public class LMachineI2H2O1 {
         }
     }
 
-    private static void passBackward(final double[] weights,
+    private void passBackward(final double[] weights,
                                      final double[] deltas,
                                      final double[] outputs,
                                      final double deltao) {
@@ -80,14 +84,6 @@ public class LMachineI2H2O1 {
         deltas[w2] = deltaw(grad(outputs[i1], deltaH2), deltas[w2]);
         deltas[w4] = deltaw(grad(outputs[i2], deltaH2), deltas[w4]);
         deltas[w7] = deltaw(grad(outputs[b1], deltaH2), deltas[w7]);
-    }
-
-    public void dumpWeights(final double[] weights) {
-
-        out.println(format("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f",
-            weights[w1], weights[w2], weights[w3],
-            weights[w4], weights[w5], weights[w6], weights[w7], weights[w8])
-        );
     }
 
     public  void passForward(final double[] set,
@@ -116,7 +112,7 @@ public class LMachineI2H2O1 {
      * @param delta - DELTA.w-1
      * @return deltaw
      */
-    private static double deltaw(final double grad, final double delta) {
+    private double deltaw(final double grad, final double delta) {
 
         return epsilon * grad + alpha * delta;
     }
@@ -169,5 +165,26 @@ public class LMachineI2H2O1 {
     static double sigmoid(final double x) {
 
         return 1 / (1 + Math.pow(Math.E, (-1 * x)));
+    }
+
+    public void dumpWeights(final double[] weights) {
+        out.println(format("%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f",
+            weights[w1], weights[w2], weights[w3],
+            weights[w4], weights[w5], weights[w6], weights[w7], weights[w8])
+        );
+    }
+
+    public void checkResults(final String op, final double[] weights, final double[][] set) {
+
+        out.println("\nresults for " + op);
+        for (int i = 0; i < set.length; i++) {
+            val outputs = new double[VERTEX_CNT];
+            val ideal = set[i][2];
+            passForward(set[i], weights, outputs);
+            val error = error(outputs[o1], ideal);
+
+            out.println(format("%.3f\t%.3f\t%.3f\t%.3f\t%.3f",
+                set[i][0], set[i][1], ideal, outputs[o1], error));
+        }
     }
 }
