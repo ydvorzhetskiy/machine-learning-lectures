@@ -29,7 +29,7 @@ public class HelloWorld1 {
     static final int h1 = 2;
     static final int h2 = 3;
     static final int o1 = 4;
-    static final int b1 = 5;
+//    static final int b1 = 5;
     public static double[] initialWeights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2};
     public static int epochs = 10000;
 
@@ -105,7 +105,6 @@ public class HelloWorld1 {
         out.println("\nresults for " + op);
         for (int i = 0; i < set.length; i++) {
             val outputs = new double[VERTEX_CNT];
-            outputs[b1] = 1;
             val ideal = set[i][2];
             passForward(set[i], weights, outputs);
             val error = error(outputs[o1], ideal);
@@ -120,7 +119,6 @@ public class HelloWorld1 {
         val deltas = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         for (final int[] ints : set) {
             val outputs = new double[VERTEX_CNT];
-            outputs[b1] = 1;
             val ideal = ints[2];
             passForward(ints, weights, outputs);
             passBackward(weights, deltas, outputs, deltao(outputs[o1], ideal));
