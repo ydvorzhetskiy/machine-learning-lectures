@@ -33,7 +33,7 @@ public class HelloWorld2 {
     static final int o1 = 4;
     static final int b1 = 5;
     public static double[] initialWeights = {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
-    public static int epochs = 5000;
+    public static int epochs = 1000;
 
     public static void main(String[] args) {
 
@@ -107,7 +107,7 @@ public class HelloWorld2 {
 //                out.println(format("%.3f\t%.3f\t%.3f", error, e, a));
             }
         }
-//        out.println(format("\n---WINNER---\n%.3f\t%.3f\t%.3f", minError, bestEpsilon, bestAlpha));
+        out.println(format("\n---WINNER---\n%.3f\t%.3f\t%.3f", minError, bestEpsilon, bestAlpha));
         //        epochs = 4_000;
         epsilon = bestEpsilon;
         alpha = bestAlpha;
@@ -193,7 +193,7 @@ public class HelloWorld2 {
         outputs[b1] = 1;
 
         val inp = new double[5];
-        inp[h1] = outputs[i1] * weights[w1] + outputs[i1] * weights[w3] + outputs[b1] * weights[w8];
+        inp[h1] = outputs[i1] * weights[w1] + outputs[i2] * weights[w3] + outputs[b1] * weights[w8];
         inp[h2] = outputs[i1] * weights[w2] + outputs[i2] * weights[w4] + outputs[b1] * weights[w7];
 
         //H-outputs
@@ -201,7 +201,7 @@ public class HelloWorld2 {
         outputs[h2] = sigmoid(inp[h2]);
 
         inp[o1] = outputs[h1] * weights[w5] + outputs[h2] * weights[w6];
-        outputs[o1] = sigmoid(inp[o1]);
+        outputs[o1] = inp[o1];
     }
 
     /**
