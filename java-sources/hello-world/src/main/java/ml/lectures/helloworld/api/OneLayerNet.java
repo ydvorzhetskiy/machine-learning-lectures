@@ -102,7 +102,7 @@ public class OneLayerNet implements LNet {
 
         val ivert = vertices[0];
         val hvert = vertices[1];
-        val bvert = vertices[2]; //why not used?
+        val bvert = vertices[2];
         val overt = vertices[3];
 
         val odeltas = new double[deltas.osize()];
