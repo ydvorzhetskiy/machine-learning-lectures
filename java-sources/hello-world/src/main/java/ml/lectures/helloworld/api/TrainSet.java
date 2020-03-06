@@ -9,7 +9,7 @@
  */
 package ml.lectures.helloworld.api;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * TrainSet  description
@@ -22,12 +22,13 @@ public interface TrainSet {
      * forEach
      * @param consumer - consumer
      */
-    void forEach(Consumer<double[]> consumer);
+    void forEach(BiConsumer<double[], double[]> consumer);
 
     /**
      * add
-     * @param set - set
+     * @param data - set
+     * @param target - target
      * @return this
      */
-    TrainSet add(double[] set);
+    TrainSet add(double[] data, double[] target);
 }

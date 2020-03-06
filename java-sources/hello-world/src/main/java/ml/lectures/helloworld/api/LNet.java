@@ -1,5 +1,7 @@
 package ml.lectures.helloworld.api;
 
+import java.util.function.Consumer;
+
 /**
  * LMachine  description
  *
@@ -12,6 +14,13 @@ public interface LNet {
      * @param weights - weights
      * @param set - set
      */
-    void train(Weights weights, TrainSet set, double[] target);
+    void train(Weights weights, TrainSet set);
 
+    /**
+     * check
+     * @param weights - weights
+     * @param set - set
+     * @param error - error
+     */
+    void check(Weights weights, TrainSet set, Consumer<Double> error);
 }

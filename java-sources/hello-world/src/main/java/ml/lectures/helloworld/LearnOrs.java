@@ -17,15 +17,15 @@ import ml.lectures.helloworld.api.SimpleWeights;
 import org.apache.commons.lang3.mutable.MutableDouble;
 
 /**
- * LearnXors  description
+ * LearnOrs  description
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class LearnXors {
+public class LearnOrs {
 
     public static void main(String[] args) {
 
-        val machine = new OneLayerNet(new SigmoidMath(1.1, 1.1));
+        val machine = new OneLayerNet(new SigmoidMath(0.2, 0.8));
         val weights = new SimpleWeights(2, 2, 1, 1)
             .i2h(0, 0, 0.5)
             .i2h(0, 1, 0.3)
@@ -37,10 +37,10 @@ public class LearnXors {
             .b2h(0, 1, -0.2);
 
         val set = new ListTrainSet()
-            .add(new double[] {0, 0}, new double[] {xor(0, 0)})
-            .add(new double[] {0, 1}, new double[] {xor(0, 1)})
-            .add(new double[] {1, 1}, new double[] {xor(1, 1)})
-            .add(new double[] {1, 0}, new double[] {xor(1, 0)});
+            .add(new double[] {0, 0}, new double[] {or(0, 0)})
+            .add(new double[] {0, 1}, new double[] {or(0, 1)})
+            .add(new double[] {1, 1}, new double[] {or(1, 1)})
+            .add(new double[] {1, 0}, new double[] {or(1, 0)});
 
         for (int i = 1; i <= 10_000_000; i++) {
             machine.train(weights, set);
@@ -51,7 +51,6 @@ public class LearnXors {
                 val error = new MutableDouble(0.);
                 machine.check(weights, set, error::add);
                 System.out.println(String.format("\t%.3f", error.doubleValue()));
-//                System.out.println(String.format("\t%.3d", error.longValue()));
                 if (error.doubleValue() < 0.001) {
                     break;
                 }
@@ -59,7 +58,7 @@ public class LearnXors {
         }
     }
 
-    private static int xor(final int i, final int j) {
-        return i ^ j;
+    private static int or(final int i, final int j) {
+        return i | j;
     }
 }
