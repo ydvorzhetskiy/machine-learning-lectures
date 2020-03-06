@@ -7,14 +7,14 @@
  * Otherwise this violation would be treated by law and would be subject to legal prosecution.
  * Legal use of the software provides receipt of a license from the right holder only.
  */
-package ml.lectures.helloworld;
+package ml.lectures.helloworld.api;
 
 /**
  * LMath  description
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public interface LearnMath {
+public interface LMath {
 
     /**
      * Calculate deviation
@@ -54,8 +54,8 @@ public interface LearnMath {
      * @return delta for outputs
      */
     double neuronDelta(double out,
-                       double weight,
-                       double delta);
+                       double[] weight,
+                       double[] delta);
 
     /**
      * Delta for outputs:

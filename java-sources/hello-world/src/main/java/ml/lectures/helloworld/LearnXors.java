@@ -10,6 +10,11 @@
 package ml.lectures.helloworld;
 
 import lombok.val;
+import ml.lectures.helloworld.api.ListTrainSet;
+import ml.lectures.helloworld.api.OneLayerNet;
+import ml.lectures.helloworld.api.SigmoidMath;
+import ml.lectures.helloworld.api.SimpleWeights;
+import ml.lectures.helloworld.api.TrainSet;
 
 /**
  * LearnXors  description
@@ -20,17 +25,32 @@ public class LearnXors {
 
     public static void main(String[] args) {
 
-        val machine = new LMachineI2H2O1(0.9, 0.9);
-        val initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.0, 0.0};
-        final double [][] set = {
-            {0, 0, 0 ^ 0},
-            {0, 1, 0 ^ 1},
-            {1, 1, 1 ^ 1},
-            {1, 0, 1 ^ 0}
+        val machine = new OneLayerNet(new SigmoidMath(1.1, 1.1));
+        val weights = new SimpleWeights(2, 2, 1, 1)
+            .i2h(0, 0, 0.5)
+            .i2h(0, 1, 0.3)
+            .i2h(1, 0, -0.5)
+            .i2h(1, 1, 0.5)
+            .h2o(0, 0, 0.2)
+            .h2o(1, 0, 0.3)
+            .b2h(0, 0, 0.2)
+            .b2h(0, 1, -0.2);
+
+        val set = new ListTrainSet()
+            .add(new double[] {0, 0})
+            .add(new double[] {0, 1})
+            .add(new double[] {1, 1})
+            .add(new double[] {1, 0});
+
+        final double [] target = {
+            0 ^ 0,
+            0 ^ 1,
+            1 ^ 1,
+            1 ^ 0
         };
-        double[] weights = machine.teach(set, initialWeights, 5000);
-        machine.checkResults("OR", weights, set);
-        machine.dumpWeights(weights);
+        machine.train(weights, set, target);
+
+        weights.dump();
     }
 
 }

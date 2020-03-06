@@ -170,7 +170,7 @@ public class HelloWorld1 {
         outputs[h2] = sigmoid(inp[h2]);
 
         inp[o1] = outputs[h1] * weights[w5] + outputs[h2] * weights[w6];
-        outputs[o1] = sigmoid(inp[o1]);
+        outputs[o1] = inp[o1];
     }
 
     /**

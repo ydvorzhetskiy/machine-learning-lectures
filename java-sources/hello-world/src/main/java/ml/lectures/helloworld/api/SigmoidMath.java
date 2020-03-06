@@ -1,11 +1,11 @@
-package ml.lectures.helloworld;
+package ml.lectures.helloworld.api;
 
 /**
  * SigmoidMath  description
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class SigmoidMath implements LearnMath {
+public class SigmoidMath implements LMath {
 
     private final double epsilon;
     private final double alpha;
@@ -61,9 +61,13 @@ public class SigmoidMath implements LearnMath {
      * @return delta for outputs
      */
     @Override
-    public double neuronDelta(final double out, final double weight, final double delta) {
+    public double neuronDelta(final double out, final double[] weight, final double[] delta) {
 
-        return (1 - out) * out * (weight * delta);
+        double sum = 0.;
+        for (int i = 0; i < weight.length; i++) {
+            sum += weight[i] * delta[i];
+        }
+        return (1 - out) * out * sum;
     }
 
     /**
