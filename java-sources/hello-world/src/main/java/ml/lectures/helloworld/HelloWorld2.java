@@ -76,46 +76,60 @@ public class HelloWorld2 {
     }
 
     private static void teachXors() {
+//        int[][] set = {
+//            {0, 0, 0 ^ 0},
+//            {0, 1, 0 ^ 1},
+//            {1, 1, 1 ^ 1},
+//            {1, 0, 1 ^ 0}
+//        };
+//
+////        1.1, 1.1
+//        double minError = 1000000.;
+////        double bestEpsilon = 1.1;
+////        double bestAlpha = 1.1;
+////        for (double e = 0.1; e < 2.; e += 0.1) {
+////            for (double a = 0.1; a < 2.; a += 0.1) {
+//                epsilon = 1.1;
+//                alpha = 0.1;
+//                initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+////                double[] weights = teach(set);
+////                double error = 0.;
+////                for (int i = 0; i < set.length; i++) {
+////                    val outputs = new double[VERTEX_CNT];
+////                    val ideal = set[i][2];
+////                    passForward(set[i], weights, outputs);
+////                    error += error(outputs[o1], ideal);
+////                }
+////                if (error < minError) {
+////                    minError = error;
+//////                    bestEpsilon = e;
+//////                    bestAlpha = a;
+////                }
+////                out.println(format("%.3f\t%.3f\t%.3f", error, e, a));
+////            }
+////        }
+//        epochs = 1;
+//        val weights = teach(set);
+////        out.println(format("\n---WINNER---\n%.3f\t%.3f\t%.3f", minError, bestEpsilon, bestAlpha));
+//        //        epochs = 4_000;
+////        epsilon = bestEpsilon;
+////        alpha = bestAlpha;
+////        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+////        double[] weights = teach(set);
+//        checkResults("XOR", weights, set);
+//        dumpWeights(weights);
+
+        epsilon = 1.1;
+        alpha = 0.9;
+        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
         int[][] set = {
             {0, 0, 0 ^ 0},
             {0, 1, 0 ^ 1},
             {1, 1, 1 ^ 1},
             {1, 0, 1 ^ 0}
         };
-
-//        1.1, 1.1
-        double minError = 1000000.;
-//        double bestEpsilon = 1.1;
-//        double bestAlpha = 1.1;
-//        for (double e = 0.1; e < 2.; e += 0.1) {
-//            for (double a = 0.1; a < 2.; a += 0.1) {
-                epsilon = 1.1;
-                alpha = 1.1;
-                initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
-//                double[] weights = teach(set);
-//                double error = 0.;
-//                for (int i = 0; i < set.length; i++) {
-//                    val outputs = new double[VERTEX_CNT];
-//                    val ideal = set[i][2];
-//                    passForward(set[i], weights, outputs);
-//                    error += error(outputs[o1], ideal);
-//                }
-//                if (error < minError) {
-//                    minError = error;
-////                    bestEpsilon = e;
-////                    bestAlpha = a;
-//                }
-//                out.println(format("%.3f\t%.3f\t%.3f", error, e, a));
-//            }
-//        }
-        epochs = 1;
-        val weights = teach(set);
-//        out.println(format("\n---WINNER---\n%.3f\t%.3f\t%.3f", minError, bestEpsilon, bestAlpha));
-        //        epochs = 4_000;
-//        epsilon = bestEpsilon;
-//        alpha = bestAlpha;
-//        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
-//        double[] weights = teach(set);
+        epochs = 40000;
+        double[] weights = teach(set);
         checkResults("XOR", weights, set);
         dumpWeights(weights);
     }

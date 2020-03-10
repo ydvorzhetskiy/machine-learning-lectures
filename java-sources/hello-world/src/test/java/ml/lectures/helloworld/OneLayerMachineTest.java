@@ -1,6 +1,6 @@
 package ml.lectures.helloworld;
 
-import ml.lectures.helloworld.api.SimpleWeights;
+import ml.lectures.helloworld.api.ArrayWeights;
 import ml.lectures.helloworld.api.Weights;
 import org.testng.annotations.Test;
 
@@ -23,7 +23,7 @@ public class OneLayerMachineTest {
 //            .setBws(new int[] {4, 1})
 //            .setOws(new int[] {6, 1});
 
-        Weights weights = new SimpleWeights(2, 2, 1, 1);
+        Weights weights = new ArrayWeights(2, 2, 1);
         //i0 - h0
         weights.i2h(0, 0, 1);
         //i0 - h1

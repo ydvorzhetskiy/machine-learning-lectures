@@ -1,12 +1,3 @@
-/*
- *  Copyright 2020 Russian Post
- *
- * This source code is Russian Post Confidential Proprietary.
- * This software is protected by copyright. All rights and titles are reserved.
- * You shall not use, copy, distribute, modify, decompile, disassemble or reverse engineer the software.
- * Otherwise this violation would be treated by law and would be subject to legal prosecution.
- * Legal use of the software provides receipt of a license from the right holder only.
- */
 package ml.lectures.helloworld.api;
 
 import lombok.val;
@@ -18,7 +9,7 @@ import static java.util.Arrays.fill;
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class SimpleWeights implements Weights {
+public class ArrayWeights implements Weights {
 
     private final double[] i2h;
     private final double[] h2o;
@@ -28,14 +19,13 @@ public class SimpleWeights implements Weights {
     private final int bsize;
     private final int osize;
 
-    public SimpleWeights(final int isize,
-                         final int hsize,
-                         final int bsize,
-                         final int osize) {
+    public ArrayWeights(final int isize,
+                        final int hsize,
+                        final int osize) {
 
         this.isize = isize;
         this.hsize = hsize;
-        this.bsize = bsize;
+        this.bsize = 1;
         this.osize = osize;
         i2h = new double[isize * hsize];
         h2o = new double[osize * hsize];
@@ -63,6 +53,32 @@ public class SimpleWeights implements Weights {
         for (int i = 0; i < this.osize; i++) {
             for (int j = 0; j < this.hsize; j++) {
                 out.append(String.format("\t%.3f", h2o(j, i)));
+            }
+        }
+
+        System.out.println(out);
+    }
+
+    @Override
+    public void dumpLegend() {
+        val out = new StringBuilder();
+        for (int i = 0; i < this.isize; i++) {
+            for (int j = 0; j < this.hsize; j++) {
+                out.append(String.format("\ti%d-h%d", i, j));
+            }
+        }
+
+        for (int i = 0; i < this.bsize; i++) {
+            for (int j = 0; j < this.hsize; j++) {
+//                out.append(String.format("\t%.3f", b2h(i, j)));
+                out.append(String.format("\tb%d-h%d", i, j));
+            }
+        }
+
+        for (int i = 0; i < this.osize; i++) {
+            for (int j = 0; j < this.hsize; j++) {
+//                out.append(String.format("\t%.3f", h2o(j, i)));
+                out.append(String.format("\th%d-o%d", j, i));
             }
         }
 
