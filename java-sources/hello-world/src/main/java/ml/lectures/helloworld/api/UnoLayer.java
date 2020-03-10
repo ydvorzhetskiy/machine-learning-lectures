@@ -12,23 +12,25 @@ package ml.lectures.helloworld.api;
 import static java.util.Arrays.fill;
 
 /**
- * SimpleVertices  description
+ * UnoLayer  description
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class SimpleVertices implements Vertices {
+public class UnoLayer implements Layer {
 
-    private final double[] net;
-    private final double[] out;
+    private final double[] val;
     private final int size;
 
-    public SimpleVertices(final int size) {
+    public UnoLayer(final int size) {
 
         this.size = size;
-        net = new double[size];
-        out = new double[size];
-        fill(net, 0.);
-        fill(out, 0.);
+        val = new double[size];
+        fill(val, 0.);
+    }
+
+    @Override
+    public void clean() {
+        fill(val, 0.);
     }
 
     @Override
@@ -38,21 +40,21 @@ public class SimpleVertices implements Vertices {
 
     @Override
     public double net(final int i) {
-        return net[i];
+        return val[i];
     }
 
     @Override
     public void net(final int i, final double v) {
-        net[i] = v;
+        val[i] = v;
     }
 
     @Override
     public double out(final int i) {
-        return out[i];
+        return val[i];
     }
 
     @Override
     public void out(final int i, final double v) {
-        out[i] = v;
+        val[i] = v;
     }
 }

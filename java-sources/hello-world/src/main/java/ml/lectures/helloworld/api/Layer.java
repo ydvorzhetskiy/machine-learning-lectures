@@ -14,7 +14,12 @@ package ml.lectures.helloworld.api;
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public interface Vertices {
+public interface Layer {
+
+    /**
+     * clean data
+     */
+    void clean();
 
     /**
      * Gets size

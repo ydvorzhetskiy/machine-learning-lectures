@@ -11,10 +11,10 @@ import java.util.function.Consumer;
  */
 public class OneLayerNet implements LNet {
 
-    private static final int I_VERT = 0;
-    private static final int H_VERT = 1;
-    private static final int B_VERT = 2;
-    private static final int O_VERT = 3;
+    private static final int I_LAYER = 0;
+    private static final int H_LAYER = 1;
+    private static final int B_LAYER = 2;
+    private static final int O_LAYER = 3;
     
     private final LMath math;
 
@@ -27,17 +27,14 @@ public class OneLayerNet implements LNet {
     }
 
     public void check(final Weights weights, final TrainSet set, Consumer<Double> error) {
-        val vertices = new Vertices[O_VERT + 1];
-        vertices[I_VERT] = new SimpleVertices(weights.isize());
-        vertices[H_VERT] = new SimpleVertices(weights.hsize());
-        vertices[B_VERT] = new SimpleVertices(weights.bsize());
-        vertices[O_VERT] = new SimpleVertices(weights.osize());
+        val layers = layers(weights);
         set.forEach(
             (d, t) -> {
-                forward(d, weights, vertices);
-                for (int i = 0; i < vertices[O_VERT].size(); i++) {
+                clear(layers);
+                forward(d, weights, layers);
+                for (int i = 0; i < layers[O_LAYER].size(); i++) {
                     error.accept(
-                        math.deviation(vertices[O_VERT].net(i), t[i])
+                        math.deviation(layers[O_LAYER].net(i), t[i])
                     );
                 }
             }
@@ -49,18 +46,31 @@ public class OneLayerNet implements LNet {
     public void train(final Weights weights, final TrainSet set) {
 
         val deltas = new SimpleWeights(weights.isize(), weights.hsize(), weights.bsize(), weights.osize());
-        val vertices = new Vertices[O_VERT + 1];
-        vertices[I_VERT] = new SimpleVertices(weights.isize());
-        vertices[H_VERT] = new SimpleVertices(weights.hsize());
-        vertices[B_VERT] = new SimpleVertices(weights.bsize());
-        vertices[O_VERT] = new SimpleVertices(weights.osize());
+        val layers = layers(weights);
         set.forEach(
             (d, t) -> {
-                forward(d, weights, vertices);
-                backward(vertices, weights, deltas, t);
+                clear(layers);
+                forward(d, weights, layers);
+                backward(layers, weights, deltas, t);
             }
         );
         fixWeights(weights, deltas);
+    }
+
+    private void clear(final Layer[] layers) {
+        layers[I_LAYER].clean();
+        layers[H_LAYER].clean();
+        layers[B_LAYER].clean();
+        layers[O_LAYER].clean();
+    }
+
+    private Layer[] layers(final Weights weights) {
+        val layers = new Layer[O_LAYER + 1];
+        layers[I_LAYER] = new UnoLayer(weights.isize());
+        layers[H_LAYER] = new IoLayer(weights.hsize());
+        layers[B_LAYER] = new BLayer();
+        layers[O_LAYER] = new UnoLayer(weights.osize());
+        return layers;
     }
 
     private void fixWeights(final Weights weights, final SimpleWeights deltas) {
@@ -77,82 +87,83 @@ public class OneLayerNet implements LNet {
         }
     }
 
-    private void clean(final Vertices[] vertices) {
+    private void clean(final Layer[] layers) {
 
-        val ivert = vertices[I_VERT];
-        val hvert = vertices[H_VERT];
-        val overt = vertices[O_VERT];
+        val il = layers[I_LAYER];
+        val hl = layers[H_LAYER];
+        val ol = layers[O_LAYER];
 
-        for (int i = 0; i < overt.size(); i++) {
-            overt.net(i, 0.);
+        for (int i = 0; i < ol.size(); i++) {
+            ol.net(i, 0.);
         }
-        for (int i = 0; i < hvert.size(); i++) {
-            hvert.net(i, 0.);
-            hvert.out(i, 0.);
+        for (int i = 0; i < hl.size(); i++) {
+            hl.net(i, 0.);
+            hl.out(i, 0.);
         }
-        for (int i = 0; i < ivert.size(); i++) {
-            ivert.out(i, 0.);
+        for (int i = 0; i < il.size(); i++) {
+            il.out(i, 0.);
         }
     }
 
     private void forward(final double[] set,
                          final Weights weights,
-                         final Vertices[] vertices) {
+                         final Layer[] layers) {
 
-        clean(vertices);
-        val ivert = vertices[I_VERT];
-        val hvert = vertices[H_VERT];
-        val bvert = vertices[B_VERT];
-        val overt = vertices[O_VERT];
+        clean(layers);
+        val il = layers[I_LAYER];
+        val hl = layers[H_LAYER];
+        val bl = layers[B_LAYER];
+        val ol = layers[O_LAYER];
 
-        init(set, vertices, weights);
+        init(set, layers);
 
-        for (int i = 0; i < hvert.size(); i++) {
+        for (int i = 0; i < il.size(); i++) {
+            for (int j = 0; j < hl.size(); j++) {
+                hl.net(j, hl.net(j) + il.out(i) * weights.i2h(i, j));
+            }
+        }
+
+        for (int i = 0; i < bl.size(); i++) {
+            for (int j = 0; j < hl.size(); j++) {
+                hl.net(j, hl.net(j) + bl.out(i) * weights.b2h(i, j));
+            }
+        }
+
+        for (int i = 0; i < hl.size(); i++) {
+            hl.out(i, math.logisticFun(hl.net(i)));
+        }
+
+        for (int i = 0; i < ol.size(); i++) {
             double net = 0.;
-
-            for (int j = 0; j < ivert.size(); j++) {
-                net += ivert.out(j) * weights.i2h(j, i);
+            for (int j = 0; j < hl.size(); j++) {
+                net += hl.out(j) * weights.h2o(j, i);
             }
-
-            for (int j = 0; j < bvert.size(); j++) {
-                net += bvert.out(j) * weights.b2h(j, i);
-            }
-            hvert.out(i, hvert.out(i) + math.logisticFun(net));
-
-            for (int j = 0; j < overt.size(); j++) {
-                overt.net(j, overt.net(j) + hvert.out(i) * weights.h2o(i, j));
-            }
+            ol.net(i, net);
         }
     }
 
     private void init(final double[] set,
-                      final Vertices[] vertices,
-                      final Weights weights) {
+                      final Layer[] layers) {
 
-        val ivert = vertices[I_VERT];
-        val bvert = vertices[B_VERT];
-
-        for(int i = 0; i < ivert.size(); i++) {
-            ivert.out(i, set[i]);
-        }
-        for (int i = 0; i < weights.bsize(); i++) {
-            bvert.out(i, 1);
+        val ih = layers[I_LAYER];
+        for(int i = 0; i < ih.size(); i++) {
+            ih.out(i, set[i]);
         }
     }
 
-    private void backward(final Vertices[] vertices,
+    private void backward(final Layer[] layers,
                           final Weights weights,
                           final Weights deltas,
                           final double[] target) {
 
-        val ivert = vertices[I_VERT];
-        val hvert = vertices[H_VERT];
-        val bvert = vertices[B_VERT];
-        val overt = vertices[O_VERT];
+        val il = layers[I_LAYER];
+        val hl = layers[H_LAYER];
+        val bl = layers[B_LAYER];
+        val ol = layers[O_LAYER];
 
         val odeltas = new double[deltas.osize()];
         for (int i = 0; i < deltas.osize(); i++) {
-            odeltas[i] = math.outputDelta(overt.net(i), target[i]);
+            odeltas[i] = math.outputDelta(ol.net(i), target[i]);
         }
 
         for (int i = 0; i < deltas.osize(); i++) {
@@ -160,7 +171,7 @@ public class OneLayerNet implements LNet {
                 deltas.h2o(j, i,
                     math.weightDelta(
                         math.gradient(
-                            hvert.out(j),
+                            hl.out(j),
                             odeltas[i]
                         ),
                         deltas.h2o(j, i)
@@ -177,13 +188,13 @@ public class OneLayerNet implements LNet {
                 ws[j] = weights.h2o(i, j);
                 ds[j] = odeltas[j];
             }
-            hdeltas[i] = math.neuronDelta(hvert.out(i), ws, ds);
+            hdeltas[i] = math.neuronDelta(hl.out(i), ws, ds);
         }
 
         for (int i = 0; i < deltas.hsize(); i++) {
             for (int j = 0; j < deltas.isize(); j++) {
                 deltas.i2h(j, i,
-                    math.weightDelta(math.gradient(ivert.out(j), hdeltas[i]), deltas.i2h(j, i))
+                    math.weightDelta(math.gradient(il.out(j), hdeltas[i]), deltas.i2h(j, i))
                 );
             }
         }
@@ -191,7 +202,7 @@ public class OneLayerNet implements LNet {
         for (int i = 0; i < deltas.hsize(); i++) {
             for (int j = 0; j < deltas.bsize(); j++) {
                 deltas.b2h(j, i,
-                    math.weightDelta(math.gradient(bvert.out(j), hdeltas[i]), deltas.b2h(j, i))
+                    math.weightDelta(math.gradient(bl.out(j), hdeltas[i]), deltas.b2h(j, i))
                 );
             }
         }

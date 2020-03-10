@@ -91,34 +91,38 @@ public class SimpleWeights implements Weights {
 
     @Override
     public Weights i2h(int i, int h, double v) {
-        i2h[i * hsize + h] = v;
+        i2h[offset(i, h)] = v;
         return this;
+    }
+
+    private int offset(final int i, final int h) {
+        return i * hsize + h;
     }
 
     @Override
     public double i2h(int i, int h) {
-        return i2h[i * hsize + h];
+        return i2h[offset(i, h)];
     }
 
     @Override
     public Weights b2h(int b, int h, double v) {
-        b2h[b * hsize + h] = v;
+        b2h[offset(b, h)] = v;
         return this;
     }
 
     @Override
     public double b2h(int b, int h) {
-        return b2h[b * hsize + h];
+        return b2h[offset(b, h)];
     }
 
     @Override
     public Weights h2o(int h, int o, double v) {
-        h2o[o * hsize + h] = v;
+        h2o[offset(o, h)] = v;
         return this;
     }
 
     @Override
     public double h2o(int h, int o) {
-        return  h2o[o * hsize + h];
+        return  h2o[offset(o, h)];
     }
 }

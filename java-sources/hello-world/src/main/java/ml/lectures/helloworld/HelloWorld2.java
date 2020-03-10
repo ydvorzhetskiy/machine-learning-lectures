@@ -83,36 +83,39 @@ public class HelloWorld2 {
             {1, 0, 1 ^ 0}
         };
 
+//        1.1, 1.1
         double minError = 1000000.;
-        double bestEpsilon = 1000000.;
-        double bestAlpha = 1000000.;
-        for (double e = 0.1; e < 2.; e += 0.1) {
-            for (double a = 0.1; a < 2.; a += 0.1) {
-                epsilon = e;
-                alpha = a;
+//        double bestEpsilon = 1.1;
+//        double bestAlpha = 1.1;
+//        for (double e = 0.1; e < 2.; e += 0.1) {
+//            for (double a = 0.1; a < 2.; a += 0.1) {
+                epsilon = 1.1;
+                alpha = 1.1;
                 initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
-                double[] weights = teach(set);
-                double error = 0.;
-                for (int i = 0; i < set.length; i++) {
-                    val outputs = new double[VERTEX_CNT];
-                    val ideal = set[i][2];
-                    passForward(set[i], weights, outputs);
-                    error += error(outputs[o1], ideal);
-                }
-                if (error < minError) {
-                    minError = error;
-                    bestEpsilon = e;
-                    bestAlpha = a;
-                }
+//                double[] weights = teach(set);
+//                double error = 0.;
+//                for (int i = 0; i < set.length; i++) {
+//                    val outputs = new double[VERTEX_CNT];
+//                    val ideal = set[i][2];
+//                    passForward(set[i], weights, outputs);
+//                    error += error(outputs[o1], ideal);
+//                }
+//                if (error < minError) {
+//                    minError = error;
+////                    bestEpsilon = e;
+////                    bestAlpha = a;
+//                }
 //                out.println(format("%.3f\t%.3f\t%.3f", error, e, a));
-            }
-        }
-        out.println(format("\n---WINNER---\n%.3f\t%.3f\t%.3f", minError, bestEpsilon, bestAlpha));
+//            }
+//        }
+        epochs = 1;
+        val weights = teach(set);
+//        out.println(format("\n---WINNER---\n%.3f\t%.3f\t%.3f", minError, bestEpsilon, bestAlpha));
         //        epochs = 4_000;
-        epsilon = bestEpsilon;
-        alpha = bestAlpha;
-        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
-        double[] weights = teach(set);
+//        epsilon = bestEpsilon;
+//        alpha = bestAlpha;
+//        initialWeights = new double[] {0.5, 0.3, -0.5, 0.5, 0.2, 0.3, 0.2, -0.2};
+//        double[] weights = teach(set);
         checkResults("XOR", weights, set);
         dumpWeights(weights);
     }
@@ -175,6 +178,7 @@ public class HelloWorld2 {
         deltas[w2] = deltaw(grad(outputs[i1], deltaH2), deltas[w2]);
         deltas[w4] = deltaw(grad(outputs[i2], deltaH2), deltas[w4]);
         deltas[w7] = deltaw(grad(outputs[b1], deltaH2), deltas[w7]);
+        System.out.println("ok");
     }
 
     private static void dumpWeights(final double[] weights) {
