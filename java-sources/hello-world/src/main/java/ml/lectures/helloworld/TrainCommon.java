@@ -14,11 +14,9 @@ import ml.lectures.helloworld.api.ArrayWeights;
 import ml.lectures.helloworld.api.LNet;
 import ml.lectures.helloworld.api.TrainSet;
 import ml.lectures.helloworld.api.Weights;
-import org.apache.commons.lang3.mutable.MutableDouble;
 
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.lang.String.format;
@@ -70,7 +68,7 @@ public class TrainCommon {
         };
         return consumer -> {
 
-            for (double[]set: inputs) {
+            for (double[] set: inputs) {
                 consumer.accept(set, new double[] {fun.apply(set)});
             }
         };

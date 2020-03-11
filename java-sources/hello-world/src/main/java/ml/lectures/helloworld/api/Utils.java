@@ -85,4 +85,29 @@ public final class Utils {
         int l = (int ) j;
         return (k & l);
     }
+
+    public static void randomizeWeights(final Weights weights) {
+
+        for (int i = 0; i < weights.isize(); i++) {
+            for (int j = 0; j < weights.hsize(); j++) {
+                weights.i2h(i, j, random());
+            }
+        }
+
+        for (int i = 0; i < weights.bsize(); i++) {
+            for (int j = 0; j < weights.hsize(); j++) {
+                weights.b2h(i, j, random());
+            }
+        }
+
+        for (int i = 0; i < weights.osize(); i++) {
+            for (int j = 0; j < weights.hsize(); j++) {
+                weights.h2o(j, i, random());
+            }
+        }
+    }
+
+    static double random() {
+        return Math.random();
+    };
 }
