@@ -81,7 +81,6 @@ public class TrainCommon {
             if (bp.contains(i)) {
                 val error = new MutableDouble(0.);
                 net.check(weights, set, error::add);
-//                out.println(format("epoch: %d", i));
                 out.println(format("epoch: %d\terror:\t%.3f", i, error.doubleValue()));
                 dump(weights);
             }
