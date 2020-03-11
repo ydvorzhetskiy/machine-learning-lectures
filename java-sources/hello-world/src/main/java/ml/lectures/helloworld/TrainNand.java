@@ -1,4 +1,3 @@
-
 package ml.lectures.helloworld;
 
 import lombok.val;
@@ -13,11 +12,11 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * TrainAnds  description
+ * TrainNand  description
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class TrainAnds {
+public class TrainNand {
 
     public static void main(String[] args) {
 
@@ -34,10 +33,10 @@ public class TrainAnds {
             .b2h(0, 1, 0.2);
 
         val set = new ListTrainSet()
-            .add(new double[] {0, 0}, new double[] {and(0, 0)})
-            .add(new double[] {0, 1}, new double[] {and(0, 1)})
-            .add(new double[] {1, 1}, new double[] {and(1, 1)})
-            .add(new double[] {1, 0}, new double[] {and(1, 0)});
+            .add(new double[] {0, 0}, new double[] {nand(0, 0)})
+            .add(new double[] {0, 1}, new double[] {nand(0, 1)})
+            .add(new double[] {1, 1}, new double[] {nand(1, 1)})
+            .add(new double[] {1, 0}, new double[] {nand(1, 0)});
 
         val bp = Stream.of(1, 20, 30, 1_100, 1_370, 5_000, 10_000, 20_000)
             .collect(toSet());
@@ -59,7 +58,7 @@ public class TrainAnds {
         }
     }
 
-    private static int and(final int i, final int j) {
-        return i & j;
+    private static int nand(final int i, final int j) {
+        return (i & j) == 0 ? 1 : 0;
     }
 }

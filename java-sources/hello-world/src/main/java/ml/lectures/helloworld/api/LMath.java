@@ -20,7 +20,7 @@ public interface LMath {
      * @param x - input
      * @return some value
      */
-    double logisticFun(double x);
+    double activation(double x);
 
     /**
      * Delta for weight
@@ -28,7 +28,7 @@ public interface LMath {
      * @param delta - previous delta
      * @return some value
      */
-    double weightDelta(double grad, double delta);
+    double dweight(double grad, double delta);
 
     /**
      * Gradient for neuron
@@ -44,9 +44,9 @@ public interface LMath {
      * @param delta - OUT.delta
      * @return delta for outputs
      */
-    double neuronDelta(double out,
-                       double[] weight,
-                       double[] delta);
+    double dneuron(double out,
+                   double[] weight,
+                   double[] delta);
 
     /**
      * Delta for outputs:
@@ -54,5 +54,5 @@ public interface LMath {
      * @param ideal - ideal value
      * @return delta for outputs
      */
-    double outputDelta(double actual, double ideal);
+    double doutput(double actual, double ideal);
 }

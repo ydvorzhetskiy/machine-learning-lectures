@@ -101,7 +101,7 @@ public class H1Net implements LNet {
         }
 
         for (int i = 0; i < hl.size(); i++) {
-            hl.out(i, math.logisticFun(hl.net(i)));
+            hl.out(i, math.activation(hl.net(i)));
         }
 
         for (int i = 0; i < ol.size(); i++) {
@@ -110,7 +110,7 @@ public class H1Net implements LNet {
                 net += hl.out(j) * weights.h2o(j, i);
             }
             ol.net(i, net);
-            ol.out(i, math.logisticFun(net));
+            ol.out(i, math.activation(net));
         }
     }
 
@@ -126,13 +126,13 @@ public class H1Net implements LNet {
 
         val odeltas = new double[deltas.osize()];
         for (int i = 0; i < deltas.osize(); i++) {
-            odeltas[i] = math.outputDelta(ol.out(i), target[i]);
+            odeltas[i] = math.doutput(ol.out(i), target[i]);
         }
 
         for (int i = 0; i < deltas.osize(); i++) {
             for (int j = 0; j < deltas.hsize(); j++) {
                 deltas.h2o(j, i,
-                    math.weightDelta(
+                    math.dweight(
                         math.gradient(
                             hl.out(j),
                             odeltas[i]
@@ -151,13 +151,13 @@ public class H1Net implements LNet {
                 ws[j] = weights.h2o(i, j);
                 ds[j] = odeltas[j];
             }
-            hdeltas[i] = math.neuronDelta(hl.out(i), ws, ds);
+            hdeltas[i] = math.dneuron(hl.out(i), ws, ds);
         }
 
         for (int i = 0; i < deltas.hsize(); i++) {
             for (int j = 0; j < deltas.isize(); j++) {
                 deltas.i2h(j, i,
-                    math.weightDelta(math.gradient(il.out(j), hdeltas[i]), deltas.i2h(j, i))
+                    math.dweight(math.gradient(il.out(j), hdeltas[i]), deltas.i2h(j, i))
                 );
             }
         }
@@ -165,7 +165,7 @@ public class H1Net implements LNet {
         for (int i = 0; i < deltas.hsize(); i++) {
             for (int j = 0; j < deltas.bsize(); j++) {
                 deltas.b2h(j, i,
-                    math.weightDelta(math.gradient(bl.out(j), hdeltas[i]), deltas.b2h(j, i))
+                    math.dweight(math.gradient(bl.out(j), hdeltas[i]), deltas.b2h(j, i))
                 );
             }
         }

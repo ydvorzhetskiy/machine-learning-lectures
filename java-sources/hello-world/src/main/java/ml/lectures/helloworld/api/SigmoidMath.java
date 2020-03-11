@@ -28,7 +28,7 @@ public class SigmoidMath implements LMath {
     }
 
     @Override
-    public double logisticFun(final double x) {
+    public double activation(final double x) {
 
         return 1 / (1 + Math.pow(Math.E, (-1 * x)));
     }
@@ -40,7 +40,7 @@ public class SigmoidMath implements LMath {
      * @return deltaw
      */
     @Override
-    public double weightDelta(final double grad, final double delta) {
+    public double dweight(final double grad, final double delta) {
 
         return epsilon * grad + alpha * delta;
     }
@@ -61,7 +61,7 @@ public class SigmoidMath implements LMath {
      * @return delta for outputs
      */
     @Override
-    public double neuronDelta(final double out, final double[] weight, final double[] delta) {
+    public double dneuron(final double out, final double[] weight, final double[] delta) {
 
         double sum = 0.;
         for (int i = 0; i < weight.length; i++) {
@@ -79,7 +79,7 @@ public class SigmoidMath implements LMath {
      * @return delta for outputs
      */
     @Override
-    public double outputDelta(final double actual, final double ideal) {
+    public double doutput(final double actual, final double ideal) {
 
         return (ideal - actual) * (1 - actual) * actual;
     }
