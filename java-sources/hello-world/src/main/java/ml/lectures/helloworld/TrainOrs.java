@@ -6,25 +6,23 @@ import ml.lectures.helloworld.api.SigmoidMath;
 import ml.lectures.helloworld.api.TrainSet;
 
 import static ml.lectures.helloworld.TrainCommon.BPOINTS;
-import static ml.lectures.helloworld.api.Utils.nand;
+import static ml.lectures.helloworld.api.Utils.or;
 
 /**
- * TrainNand  description
+ * TrainOrs  description
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class TrainNand {
+public class TrainOrs {
 
     public static void main(String[] args) {
 
-//        val net = new H1Net(new SigmoidMath(1.8, 0.8));
-        val net = new H1Net(new SigmoidMath(0.5, 0.7));
+        val net = new H1Net(new SigmoidMath(1.8, 0.8));
         val weights = TrainCommon.weights();
         final TrainSet set = TrainCommon.trainSet(
-            inputs -> nand(inputs[0], inputs[1])
+            inputs -> or(inputs[0], inputs[1])
         );
 
         TrainCommon.train(net, BPOINTS, set, weights, 10_000);
     }
-
 }

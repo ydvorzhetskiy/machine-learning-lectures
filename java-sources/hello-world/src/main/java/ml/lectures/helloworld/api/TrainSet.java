@@ -15,11 +15,4 @@ public interface TrainSet {
      */
     void forEach(BiConsumer<double[], double[]> consumer);
 
-    /**
-     * add
-     * @param data - set
-     * @param target - target
-     * @return this
-     */
-    TrainSet add(double[] data, double[] target);
 }

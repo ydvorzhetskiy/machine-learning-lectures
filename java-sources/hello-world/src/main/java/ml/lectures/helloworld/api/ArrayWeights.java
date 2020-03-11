@@ -1,7 +1,5 @@
 package ml.lectures.helloworld.api;
 
-import lombok.val;
-
 import static java.util.Arrays.fill;
 
 /**
@@ -33,56 +31,6 @@ public class ArrayWeights implements Weights {
         fill(i2h, 0.);
         fill(h2o, 0.);
         fill(b2h, 0.);
-    }
-
-    @Override
-    public void dump() {
-        val out = new StringBuilder();
-        for (int i = 0; i < this.isize; i++) {
-            for (int j = 0; j < this.hsize; j++) {
-                out.append(String.format("\t%.3f", i2h(i, j)));
-            }
-        }
-
-        for (int i = 0; i < this.bsize; i++) {
-            for (int j = 0; j < this.hsize; j++) {
-                out.append(String.format("\t%.3f", b2h(i, j)));
-            }
-        }
-
-        for (int i = 0; i < this.osize; i++) {
-            for (int j = 0; j < this.hsize; j++) {
-                out.append(String.format("\t%.3f", h2o(j, i)));
-            }
-        }
-
-        System.out.println(out);
-    }
-
-    @Override
-    public void dumpLegend() {
-        val out = new StringBuilder();
-        for (int i = 0; i < this.isize; i++) {
-            for (int j = 0; j < this.hsize; j++) {
-                out.append(String.format("\ti%d-h%d", i, j));
-            }
-        }
-
-        for (int i = 0; i < this.bsize; i++) {
-            for (int j = 0; j < this.hsize; j++) {
-//                out.append(String.format("\t%.3f", b2h(i, j)));
-                out.append(String.format("\tb%d-h%d", i, j));
-            }
-        }
-
-        for (int i = 0; i < this.osize; i++) {
-            for (int j = 0; j < this.hsize; j++) {
-//                out.append(String.format("\t%.3f", h2o(j, i)));
-                out.append(String.format("\th%d-o%d", j, i));
-            }
-        }
-
-        System.out.println(out);
     }
 
     @Override

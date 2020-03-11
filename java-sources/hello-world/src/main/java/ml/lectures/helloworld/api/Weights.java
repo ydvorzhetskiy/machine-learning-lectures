@@ -7,10 +7,6 @@ package ml.lectures.helloworld.api;
  */
 public interface Weights {
 
-    void dump();
-
-    void dumpLegend();
-
     int isize();
 
     int hsize();

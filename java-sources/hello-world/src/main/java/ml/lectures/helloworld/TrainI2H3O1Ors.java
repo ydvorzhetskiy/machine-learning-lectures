@@ -3,13 +3,10 @@ package ml.lectures.helloworld;
 import lombok.val;
 import ml.lectures.helloworld.api.ArrayWeights;
 import ml.lectures.helloworld.api.H1Net;
-import ml.lectures.helloworld.api.ListTrainSet;
 import ml.lectures.helloworld.api.SigmoidMath;
-import org.apache.commons.lang3.mutable.MutableDouble;
+import ml.lectures.helloworld.api.TrainSet;
 
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toSet;
+import static ml.lectures.helloworld.api.Utils.or;
 
 /**
  * LearnOrs  description
@@ -20,8 +17,8 @@ public class TrainI2H3O1Ors {
 
     public static void main(String[] args) {
 
-//        val machine = new H1Net(new SigmoidMath(0.9, 0.5));
-        val machine = new H1Net(new SigmoidMath(0.9, 0.5));
+//        val net = new H1Net(new SigmoidMath(0.9, 0.5));
+        val net = new H1Net(new SigmoidMath(0.9, 0.5));
         val weights = new ArrayWeights(2, 3, 1)
             .i2h(0, 0, 0.5)
             .i2h(0, 1, 0.3)
@@ -35,32 +32,15 @@ public class TrainI2H3O1Ors {
             .b2h(0, 1, 0.2)
             .b2h(0, 2, 0.2);
 
-        val set = new ListTrainSet()
-            .add(new double[] {0, 0}, new double[] {or(0, 0)})
-            .add(new double[] {0, 1}, new double[] {or(0, 1)})
-            .add(new double[] {1, 1}, new double[] {or(1, 1)})
-            .add(new double[] {1, 0}, new double[] {or(1, 0)});
-        val bp = Stream.of(1, 20, 30, 1_100, 1_370, 5_000, 10_000)
-            .collect(toSet());
-
-        weights.dumpLegend();
-        for (int i = 1; i <= 40000; i++) {
-            machine.train(weights, set);
-            if (bp.contains(i)) {
-                System.out.println(String.format("%d", i));
-                weights.dump();
-                val error = new MutableDouble(0.);
-                machine.check(weights, set, error::add);
-                System.out.println(String.format("\t%.3f", error.doubleValue()));
-//                System.out.println(String.format("\t%.3d", error.longValue()));
-//                if (error.doubleValue() < 0.001) {
-//                    break;
-//                }
-            }
-        }
-    }
-
-    private static int or(final int i, final int j) {
-        return i | j;
+        final TrainSet set = TrainCommon.trainSet(
+            inputs -> or(inputs[0], inputs[1])
+        );
+        TrainCommon.train(
+            net,
+            new int[] {1, 100, 500, 1_000, 2_500, 5_000, 10_000},
+            set,
+            weights,
+            10_000
+        );
     }
 }

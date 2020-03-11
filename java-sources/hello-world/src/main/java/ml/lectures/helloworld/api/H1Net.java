@@ -35,7 +35,6 @@ public class H1Net implements LNet {
                 }
             }
         );
-
     }
 
     @Override
