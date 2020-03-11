@@ -17,6 +17,8 @@ import ml.lectures.helloworld.api.Weights;
 import org.apache.commons.lang3.mutable.MutableDouble;
 
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.lang.String.format;
@@ -91,9 +93,17 @@ public class TrainCommon {
         for (int i = 1; i <= epochs; i++) {
             net.train(weights, set);
             if (bp.contains(i)) {
-                val error = new MutableDouble(0.);
-                net.check(weights, set, error::add);
-                out.println(format("epoch: %d\terror:\t%.3f", i, error.doubleValue()));
+                double error = 0.;
+                val errors = new double[4];
+                val epos = new AtomicInteger(0);
+                net.check(weights, set, e -> errors[epos.getAndIncrement()] = e);
+                for (double e: errors) {
+                    error += e;
+                }
+                out.println(format("epoch: %d\terror:\t%.3f", i, error));
+                for (double e: errors) {
+                    out.println(format("%.3f", e));
+                }
                 dump(weights);
             }
         }

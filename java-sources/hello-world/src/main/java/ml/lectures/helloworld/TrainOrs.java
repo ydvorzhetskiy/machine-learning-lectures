@@ -23,6 +23,6 @@ public class TrainOrs {
             inputs -> or(inputs[0], inputs[1])
         );
 
-        TrainCommon.train(net, BPOINTS, set, weights, 777);
+        TrainCommon.train(net, BPOINTS, set, weights, 10000);
     }
 }
