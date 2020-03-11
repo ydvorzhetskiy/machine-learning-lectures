@@ -49,7 +49,7 @@ public class TrainQuarters {
                 }
             }
         };
-        train(net, BPOINTS, set, weights, 50000);
+        train(net, BPOINTS, set, weights, 10000);
     }
 
     static void train(final LNet net,
@@ -82,22 +82,19 @@ public class TrainQuarters {
 
     }
 
+    //
     //   0   |   1
     // ------+-------
     //   2   |   3
     //
     private static double quarter(final double i, final double j) {
 
+        double result;
         if (i <= 0.5) {
-            if (j <= 0.5) {
-                return 2;
-            }
-            return 0;
+            result = j <= 0.5 ? 2 : 0;
         } else {
-            if (j <= 0.5) {
-                return 3;
-            }
-            return 1;
+            result = j <= 0.5 ? 3 : 1;
         }
+        return result;
     }
 }
