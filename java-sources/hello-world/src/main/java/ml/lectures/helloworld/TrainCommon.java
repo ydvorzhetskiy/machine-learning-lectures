@@ -44,7 +44,19 @@ public class TrainCommon {
             .h2o(1, 0, 0.3)
             .b2h(0, 0, -0.2)
             .b2h(0, 1, 0.2);
-    };
+    }
+
+    static Weights weights2() {
+        return new ArrayWeights(2, 3, 1)
+            .i2h(0, 0, 0.5)
+            .i2h(0, 1, 0.3)
+            .i2h(1, 0, -0.5)
+            .i2h(1, 1, 0.5)
+            .h2o(0, 0, 0.2)
+            .h2o(1, 0, 0.3)
+            .b2h(0, 0, -0.2)
+            .b2h(0, 1, 0.2);
+    }
 
     static TrainSet trainSet(final Function<double[], Double> fun) {
 

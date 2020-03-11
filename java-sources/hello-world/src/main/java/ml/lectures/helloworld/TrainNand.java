@@ -18,13 +18,13 @@ public class TrainNand {
     public static void main(String[] args) {
 
 //        val net = new H1Net(new SigmoidMath(1.8, 0.8));
-        val net = new H1Net(new SigmoidMath(0.5, 0.7));
-        val weights = TrainCommon.weights();
+        val net = new H1Net(new SigmoidMath(1.7, 0.8));
+        val weights = TrainCommon.weights2();
         final TrainSet set = TrainCommon.trainSet(
             inputs -> nand(inputs[0], inputs[1])
         );
 
-        TrainCommon.train(net, BPOINTS, set, weights, 4000_000);
+        TrainCommon.train(net, BPOINTS, set, weights, 10_000);
     }
 
 }
