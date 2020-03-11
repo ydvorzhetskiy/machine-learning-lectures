@@ -24,7 +24,7 @@ public class TrainNand {
             inputs -> nand(inputs[0], inputs[1])
         );
 
-        TrainCommon.train(net, BPOINTS, set, weights, 10_000);
+        TrainCommon.train(net, BPOINTS, set, weights, 4000_000);
     }
 
 }

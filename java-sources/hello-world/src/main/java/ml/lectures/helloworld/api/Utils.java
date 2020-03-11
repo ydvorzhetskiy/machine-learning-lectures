@@ -40,7 +40,7 @@ public final class Utils {
             }
         }
 
-        for (int i = 0; i < weights.hsize(); i++) {
+        for (int i = 0; i < weights.bsize(); i++) {
             for (int j = 0; j < weights.hsize(); j++) {
 //                out.append(String.format("\t%.3f", b2h(i, j)));
                 out.append(String.format("\tb%d-h%d", i, j));
