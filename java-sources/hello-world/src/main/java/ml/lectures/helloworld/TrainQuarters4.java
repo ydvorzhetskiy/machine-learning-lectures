@@ -1,3 +1,12 @@
+/*
+ *  Copyright 2020 Russian Post
+ *
+ * This source code is Russian Post Confidential Proprietary.
+ * This software is protected by copyright. All rights and titles are reserved.
+ * You shall not use, copy, distribute, modify, decompile, disassemble or reverse engineer the software.
+ * Otherwise this violation would be treated by law and would be subject to legal prosecution.
+ * Legal use of the software provides receipt of a license from the right holder only.
+ */
 package ml.lectures.helloworld;
 
 import lombok.val;
@@ -7,31 +16,27 @@ import ml.lectures.helloworld.api.LNet;
 import ml.lectures.helloworld.api.SigmoidMath;
 import ml.lectures.helloworld.api.TrainSet;
 import ml.lectures.helloworld.api.Weights;
-import org.apache.commons.lang3.mutable.MutableDouble;
 
 import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static ml.lectures.helloworld.TrainCommon.BPOINTS;
-import static ml.lectures.helloworld.TrainCommon.deviation;
 import static ml.lectures.helloworld.api.Utils.randomizeWeights;
 
 /**
- * TrainQuarters2
+ * TrainQuarters4  description
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class TrainQuarters2 {
+public class TrainQuarters4 {
 
     public static void main(String[] args) {
 
-        val net = new H1Net(new SigmoidMath(0.5, 1.0));
-        val weights = new ArrayWeights(2, 4, 1);
+//        val net = new H1Net(new SigmoidMath(0.5, 1.0));
+        val net = new H1Net(new SigmoidMath(0.061, 1.22));
+        val weights = new ArrayWeights(2, 2, 1);
         randomizeWeights(weights);
 
         final TrainSet set = consumer -> {
@@ -44,34 +49,6 @@ public class TrainQuarters2 {
             }
         };
         train(net, BPOINTS, set, weights, 10000);
-
-        test(
-            net,
-            weights,
-            arr -> {
-                if (arr[3] > 0.1) {
-                    out.println(
-                        format("[%.3f, %.3f]=[%.3f], E=%.3f", arr[0], arr[1], arr[2], arr[3])
-                    );
-                }
-            }
-        );
-    }
-
-    private static void test(final LNet net, final Weights weights, Consumer<double[]> consumer) {
-
-        val toConsume = new double[4];
-        for (double i = 0.; i <= 1.0; i += 0.1) {
-            for (double j = 0.; j <= 1.0; j += 0.1) {
-                toConsume[0] = i;
-                toConsume[1] = j;
-                val r = net.test(weights, new double[] {i, j})[0];
-                val e = deviation(r, quarter(i, j)[0]);
-                toConsume[2] = r;
-                toConsume[3] = e;
-                consumer.accept(toConsume);
-            }
-        }
     }
 
     static void train(final LNet net,
@@ -89,13 +66,23 @@ public class TrainQuarters2 {
         for (int i = 1; i <= epochs; i++) {
             net.train(weights, set);
             if (bp.contains(i)) {
-                val error = new MutableDouble(0.);
-                val cnt = new AtomicInteger(0);
-                test(net, weights, arr -> {
-                    error.add(arr[3]);
-                    cnt.incrementAndGet();
-                });
-                out.println(format("epoch: %d" + "\tE: %.3f", i, error.doubleValue() / cnt.get()));
+                val r0 = net.test(weights, new double[] {0.25, 0.25});
+                val r1 = net.test(weights, new double[] {0.25, 0.75});
+                val r2 = net.test(weights, new double[] {0.75, 0.75});
+                val r3 = net.test(weights, new double[] {0.75, 0.25});
+                out.println(
+                    format("epoch: %d" +
+                            "\t[0.25, 0.25]=[%.3f]" +
+                            "\t[0.25, 0.75]=[%.3f]" +
+                            "\t[0.75, 0.75]=[%.3f]" +
+                            "\t[0.75, 0.25]=[%.3f]",
+                        i,
+                        r0[0],
+                        r1[0],
+                        r2[0],
+                        r3[0]
+                    )
+                );
             }
         }
         out.println(format("Timed\t%d", currentTimeMillis() - started));
