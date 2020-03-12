@@ -20,9 +20,9 @@ public class H1Layers implements Layers {
                     final int osize,
                     final Function<Double, Double> activationFun) {
 
-        ilayer = new Sensor(isize);
+        ilayer = new Sensors(isize);
         hlayer = new ActiveLayer(hsize, activationFun);
-        blayer = new Bias();
+        blayer = new Biases();
         olayer = new ActiveLayer(osize, activationFun);
     }
 

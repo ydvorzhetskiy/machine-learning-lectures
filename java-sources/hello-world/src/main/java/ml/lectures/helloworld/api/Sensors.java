@@ -7,12 +7,12 @@ import static java.util.Arrays.fill;
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class Sensor implements Layer {
+public class Sensors implements Layer {
 
     private final double[] val;
     private final int size;
 
-    public Sensor(final int size) {
+    public Sensors(final int size) {
 
         this.size = size;
         val = new double[size];
