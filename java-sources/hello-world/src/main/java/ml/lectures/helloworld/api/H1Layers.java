@@ -1,5 +1,7 @@
 package ml.lectures.helloworld.api;
 
+import java.util.function.Function;
+
 /**
  * H1Layers  description
  *
@@ -13,11 +15,15 @@ public class H1Layers implements Layers {
     private final Layer olayer;
 
 
-    public H1Layers(final int isize, final int hsize, final int osize) {
+    public H1Layers(final int isize,
+                    final int hsize,
+                    final int osize,
+                    final Function<Double, Double> activationFun) {
+
         ilayer = new UnoLayer(isize);
-        hlayer = new IoLayer(hsize);
+        hlayer = new ActiveLayer(hsize, activationFun);
         blayer = new BLayer();
-        olayer = new IoLayer(osize);
+        olayer = new ActiveLayer(osize, activationFun);
     }
 
     @Override

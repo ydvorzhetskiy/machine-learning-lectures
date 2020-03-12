@@ -1,5 +1,7 @@
 package ml.lectures.helloworld.api;
 
+import java.util.function.Function;
+
 import static java.util.Arrays.fill;
 
 /**
@@ -7,25 +9,24 @@ import static java.util.Arrays.fill;
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class IoLayer implements Layer {
+public class ActiveLayer implements Layer {
 
     private final double[] net;
-    private final double[] out;
     private final int size;
+    private final Function<Double, Double> activationFun;
 
-    public IoLayer(final int size) {
+    public ActiveLayer(final int size,
+                       final Function<Double, Double> activationFun) {
 
         this.size = size;
         net = new double[size];
-        out = new double[size];
+        this.activationFun = activationFun;
         fill(net, 0.);
-        fill(out, 0.);
     }
 
     @Override
     public void clean() {
         fill(net, 0.);
-        fill(out, 0.);
     }
 
     @Override
@@ -45,12 +46,7 @@ public class IoLayer implements Layer {
 
     @Override
     public double out(final int i) {
-        return out[i];
-    }
-
-    @Override
-    public void out(final int i, final double v) {
-        out[i] = v;
+        return this.activationFun.apply(net[i]);
     }
 
 }

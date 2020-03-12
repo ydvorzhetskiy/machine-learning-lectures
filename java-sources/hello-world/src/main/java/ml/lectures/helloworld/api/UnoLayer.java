@@ -44,8 +44,4 @@ public class UnoLayer implements Layer {
         return val[i];
     }
 
-    @Override
-    public void out(final int i, final double v) {
-        val[i] = v;
-    }
 }

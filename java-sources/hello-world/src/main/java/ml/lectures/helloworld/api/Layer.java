@@ -41,12 +41,12 @@ public interface Layer {
      */
     double out(final int i);
 
-    /**
-     * Set vertex out value
-     * @param i - vertex index
-     * @param v - vertex out value
-     */
-    void out(final int i, double v);
+//    /**
+//     * Set vertex out value
+//     * @param i - vertex index
+//     * @param v - vertex out value
+//     */
+//    void out(final int i, double v);
 
     default double[] out() {
         val result = new double[size()];
@@ -70,9 +70,9 @@ public interface Layer {
         }
     }
 
-    default void out(double[] arr) {
-        for (int i = 0; i < size(); i++) {
-            out(i, arr[i]);
-        }
-    }
+//    default void out(double[] arr) {
+//        for (int i = 0; i < size(); i++) {
+//            out(i, arr[i]);
+//        }
+//    }
 }

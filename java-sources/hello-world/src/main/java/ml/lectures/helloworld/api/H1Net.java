@@ -2,6 +2,8 @@ package ml.lectures.helloworld.api;
 
 import lombok.val;
 
+import java.util.function.Function;
+
 /**
  * OneLayerMachine
  *
@@ -10,6 +12,7 @@ import lombok.val;
 public class H1Net implements LNet {
 
     private final LMath math;
+    private final Function<Double, Double> activationFun;
 
     /**
      * Constructor
@@ -17,20 +20,28 @@ public class H1Net implements LNet {
      */
     public H1Net(final LMath math) {
         this.math = math;
+        activationFun = H1Net.this.math::activation;
     }
 
     public double[] test(final Weights weights, final double[] input) {
 
-        val layers = new H1Layers(weights.isize(), weights.hsize(), weights.osize());
+        val layers = newLayers(weights);
         forward(input, weights, layers);
         return layers.olayer().out();
+    }
+
+    private H1Layers newLayers(final Weights weights) {
+        return new H1Layers(weights.isize(),
+            weights.hsize(),
+            weights.osize(),
+            activationFun);
     }
 
     @Override
     public void train(final Weights weights, final TrainSet set) {
 
         val deltas = new ArrayWeights(weights.isize(), weights.hsize(), weights.osize());
-        val layers = new H1Layers(weights.isize(), weights.hsize(), weights.osize());
+        val layers = newLayers(weights);
         set.forEach(
             (d, t) -> {
                 forward(d, weights, layers);
@@ -39,13 +50,6 @@ public class H1Net implements LNet {
         );
         fixWeights(weights, deltas);
     }
-
-//    private void clear(final Layer[] layers) {
-//        layers[I_LAYER].clean();
-//        layers[H_LAYER].clean();
-//        layers[B_LAYER].clean();
-//        layers[O_LAYER].clean();
-//    }
 
     private void fixWeights(final Weights weights, final ArrayWeights deltas) {
 
@@ -71,10 +75,7 @@ public class H1Net implements LNet {
         val hl = layers.hlayer();
         val bl = layers.blayer();
         val ol = layers.olayer();
-
-        for(int i = 0; i < il.size(); i++) {
-            il.net(i, set[i]);
-        }
+        il.net(set);
 
         for (int i = 0; i < il.size(); i++) {
             for (int j = 0; j < hl.size(); j++) {
@@ -88,17 +89,12 @@ public class H1Net implements LNet {
             }
         }
 
-        for (int i = 0; i < hl.size(); i++) {
-            hl.out(i, math.activation(hl.net(i)));
-        }
-
         for (int i = 0; i < ol.size(); i++) {
             double net = 0.;
             for (int j = 0; j < hl.size(); j++) {
                 net += hl.out(j) * weights.h2o(j, i);
             }
             ol.net(i, net);
-            ol.out(i, math.activation(net));
         }
     }
 

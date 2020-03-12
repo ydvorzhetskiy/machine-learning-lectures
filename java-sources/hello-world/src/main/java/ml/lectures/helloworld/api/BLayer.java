@@ -32,9 +32,4 @@ public class BLayer implements Layer {
         return 1;
     }
 
-    @Override
-    public void out(final int i, final double v) {
-        //nop
-    }
-
 }
