@@ -7,12 +7,12 @@ import static java.util.Arrays.fill;
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class InputLayer implements Layer {
+public class Input implements Layer {
 
     private final double[] val;
     private final int size;
 
-    public InputLayer(final int size) {
+    public Input(final int size) {
 
         this.size = size;
         val = new double[size];

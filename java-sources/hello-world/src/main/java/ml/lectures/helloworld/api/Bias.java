@@ -5,7 +5,7 @@ package ml.lectures.helloworld.api;
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class BiasLayer implements Layer {
+public class Bias implements Layer {
 
     @Override
     public void clean() {
