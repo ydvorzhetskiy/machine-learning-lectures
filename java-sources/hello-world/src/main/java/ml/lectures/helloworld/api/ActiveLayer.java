@@ -12,6 +12,7 @@ import static java.util.Arrays.fill;
 public class ActiveLayer implements Layer {
 
     private final double[] net;
+    private final double[] out;
     private final int size;
     private final Function<Double, Double> activationFun;
 
@@ -20,13 +21,15 @@ public class ActiveLayer implements Layer {
 
         this.size = size;
         net = new double[size];
+        out = new double[size];
         this.activationFun = activationFun;
-        fill(net, 0.);
+        clean();
     }
 
     @Override
     public void clean() {
         fill(net, 0.);
+        fill(out, 0.);
     }
 
     @Override
@@ -42,11 +45,12 @@ public class ActiveLayer implements Layer {
     @Override
     public void net(final int i, final double v) {
         net[i] = v;
+        out[i] = this.activationFun.apply(v);
     }
 
     @Override
     public double out(final int i) {
-        return this.activationFun.apply(net[i]);
+        return out[i];
     }
 
 }

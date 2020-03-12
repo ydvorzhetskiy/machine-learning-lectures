@@ -117,10 +117,7 @@ public class H1Net implements LNet {
             for (int j = 0; j < deltas.hsize(); j++) {
                 deltas.h2o(j, i,
                     math.dweight(
-                        math.gradient(
-                            hl.out(j),
-                            odeltas[i]
-                        ),
+                        math.gradient(hl.out(j), odeltas[i]),
                         deltas.h2o(j, i)
                     )
                 );
