@@ -25,7 +25,6 @@ public class TrainHalfs {
 
     public static void main(String[] args) {
 
-//        val net = new H1Net(new SigmoidMath(0.5, 1.1));
         val net = new H1Net(new SigmoidMath(0.5, 1.0));
         val weights = new ArrayWeights(1, 2, 1);
         randomizeWeights(weights);
