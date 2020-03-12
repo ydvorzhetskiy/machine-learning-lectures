@@ -23,7 +23,7 @@ public class H1Net implements LNet {
 
         val layers = new H1Layers(weights.isize(), weights.hsize(), weights.osize());
         forward(input, weights, layers);
-        return layers.olayer().copyOut();
+        return layers.olayer().out();
     }
 
     @Override

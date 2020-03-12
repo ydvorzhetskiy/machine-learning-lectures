@@ -48,7 +48,7 @@ public interface Layer {
      */
     void out(final int i, double v);
 
-    default double[] copyOut() {
+    default double[] out() {
         val result = new double[size()];
         for (int i = 0; i < size(); i++) {
             result[i] = out(i);
@@ -56,7 +56,7 @@ public interface Layer {
         return result;
     }
 
-    default double[] copyNet() {
+    default double[] net() {
         val result = new double[size()];
         for (int i = 0; i < size(); i++) {
             result[i] = net(i);
@@ -64,13 +64,13 @@ public interface Layer {
         return result;
     }
 
-    default void copyNet(double[] arr) {
+    default void net(double[] arr) {
         for (int i = 0; i < size(); i++) {
             net(i, arr[i]);
         }
     }
 
-    default void copyOut(double[] arr) {
+    default void out(double[] arr) {
         for (int i = 0; i < size(); i++) {
             out(i, arr[i]);
         }
