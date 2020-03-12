@@ -8,14 +8,6 @@ package ml.lectures.helloworld.api;
 public interface LMath {
 
     /**
-     * Calculate deviation
-     * @param actual - actual value
-     * @param ideal - ideal value
-     * @return deviation
-     */
-    double deviation(double actual, double ideal);
-
-    /**
      * Logistic function
      * @param x - input
      * @return some value

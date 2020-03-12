@@ -22,12 +22,6 @@ public class SigmoidMath implements LMath {
     }
 
     @Override
-    public double deviation(final double actual, final double ideal) {
-
-        return Math.pow(ideal - actual, 2) / 2.;
-    }
-
-    @Override
     public double activation(final double x) {
 
         return 1 / (1 + Math.pow(Math.E, (-1 * x)));

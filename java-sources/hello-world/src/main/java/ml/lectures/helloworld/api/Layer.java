@@ -1,5 +1,7 @@
 package ml.lectures.helloworld.api;
 
+import lombok.val;
+
 /**
  * Vertices  description
  *
@@ -45,4 +47,32 @@ public interface Layer {
      * @param v - vertex out value
      */
     void out(final int i, double v);
+
+    default double[] copyOut() {
+        val result = new double[size()];
+        for (int i = 0; i < size(); i++) {
+            result[i] = out(i);
+        }
+        return result;
+    }
+
+    default double[] copyNet() {
+        val result = new double[size()];
+        for (int i = 0; i < size(); i++) {
+            result[i] = net(i);
+        }
+        return result;
+    }
+
+    default void copyNet(double[] arr) {
+        for (int i = 0; i < size(); i++) {
+            net(i, arr[i]);
+        }
+    }
+
+    default void copyOut(double[] arr) {
+        for (int i = 0; i < size(); i++) {
+            out(i, arr[i]);
+        }
+    }
 }

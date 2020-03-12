@@ -36,4 +36,5 @@ public class BLayer implements Layer {
     public void out(final int i, final double v) {
         //nop
     }
+
 }

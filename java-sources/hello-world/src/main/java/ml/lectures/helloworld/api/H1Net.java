@@ -2,8 +2,6 @@ package ml.lectures.helloworld.api;
 
 import lombok.val;
 
-import java.util.function.Consumer;
-
 /**
  * OneLayerMachine
  *
@@ -21,20 +19,11 @@ public class H1Net implements LNet {
         this.math = math;
     }
 
-    public void check(final Weights weights, final TrainSet set, Consumer<Double> error) {
+    public double[] test(final Weights weights, final double[] input) {
 
         val layers = new H1Layers(weights.isize(), weights.hsize(), weights.osize());
-        set.forEach(
-            (d, t) -> {
-                layers.clean();
-                forward(d, weights, layers);
-                for (int i = 0; i < layers.olayer().size(); i++) {
-                    error.accept(
-                        math.deviation(layers.olayer().out(i), t[i])
-                    );
-                }
-            }
-        );
+        forward(input, weights, layers);
+        return layers.olayer().copyOut();
     }
 
     @Override

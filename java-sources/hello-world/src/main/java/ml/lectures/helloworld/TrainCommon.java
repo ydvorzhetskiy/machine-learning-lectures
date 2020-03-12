@@ -1,12 +1,3 @@
-/*
- *  Copyright 2020 Russian Post
- *
- * This source code is Russian Post Confidential Proprietary.
- * This software is protected by copyright. All rights and titles are reserved.
- * You shall not use, copy, distribute, modify, decompile, disassemble or reverse engineer the software.
- * Otherwise this violation would be treated by law and would be subject to legal prosecution.
- * Legal use of the software provides receipt of a license from the right holder only.
- */
 package ml.lectures.helloworld;
 
 import lombok.val;
@@ -16,7 +7,6 @@ import ml.lectures.helloworld.api.TrainSet;
 import ml.lectures.helloworld.api.Weights;
 
 import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static java.lang.String.format;
@@ -58,17 +48,19 @@ public class TrainCommon {
             .b2h(0, 1, 0.2);
     }
 
+    static final double[][] INPUTS = {
+        {0, 0},
+        {0, 1},
+        {1, 1},
+        {0, 0}
+    };
+
     static TrainSet trainSet(final Function<double[], Double> fun) {
 
-        final double[][] inputs = {
-            {0, 0},
-            {0, 1},
-            {1, 1},
-            {0, 0}
-        };
+
         return consumer -> {
 
-            for (double[] set: inputs) {
+            for (double[] set: INPUTS) {
                 consumer.accept(set, new double[] {fun.apply(set)});
             }
         };
@@ -78,7 +70,8 @@ public class TrainCommon {
                              final int[] bpoints,
                              final TrainSet set,
                              final Weights weights,
-                             final int epochs) {
+                             final int epochs,
+                             final Function<double[], Double> fun) {
 
         val bp = new HashSet<>();
         for (int i: bpoints) {
@@ -92,9 +85,12 @@ public class TrainCommon {
             net.train(weights, set);
             if (bp.contains(i)) {
                 double error = 0.;
-                val errors = new double[4];
-                val epos = new AtomicInteger(0);
-                net.check(weights, set, e -> errors[epos.getAndIncrement()] = e);
+                val errors = new double[INPUTS.length];
+                for (int j = 0; j < INPUTS.length; j++) {
+                    val in = INPUTS[i];
+                    val res = net.test(weights, INPUTS[i]);
+                    errors[i] = deviation(res[0], fun.apply(in));
+                }
                 for (double e: errors) {
                     error += e;
                 }
@@ -106,6 +102,10 @@ public class TrainCommon {
             }
         }
         out.println(format("Timed\t%d", currentTimeMillis() - started));
+    }
 
+
+    public static double deviation(double actual, double ideal) {
+        return Math.pow(ideal - actual, 2) / 2.;
     }
 }

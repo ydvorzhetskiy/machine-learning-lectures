@@ -52,4 +52,5 @@ public class IoLayer implements Layer {
     public void out(final int i, final double v) {
         out[i] = v;
     }
+
 }
