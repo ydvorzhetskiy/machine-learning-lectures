@@ -87,9 +87,9 @@ public class TrainCommon {
                 double error = 0.;
                 val errors = new double[INPUTS.length];
                 for (int j = 0; j < INPUTS.length; j++) {
-                    val in = INPUTS[i];
-                    val res = net.test(weights, INPUTS[i]);
-                    errors[i] = deviation(res[0], fun.apply(in));
+                    val in = INPUTS[j];
+                    val res = net.test(weights, INPUTS[j]);
+                    errors[j] = deviation(res[0], fun.apply(in));
                 }
                 for (double e: errors) {
                     error += e;
