@@ -19,6 +19,8 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static ml.lectures.helloworld.TrainCommon.BPOINTS;
 import static ml.lectures.helloworld.TrainCommon.deviation;
+import static ml.lectures.helloworld.api.Utils.dump;
+import static ml.lectures.helloworld.api.Utils.dumpLegend;
 import static ml.lectures.helloworld.api.Utils.randomizeWeights;
 
 /**
@@ -30,9 +32,11 @@ public class TrainQuarters2 {
 
     public static void main(String[] args) {
 
-        val net = new H1Net(new SigmoidMath(0.5, 1.0));
+        val net = new H1Net(new SigmoidMath(0.5, 1.1));
         val weights = new ArrayWeights(2, 4, 1);
         randomizeWeights(weights);
+        dumpLegend(weights);
+        dump(weights);
 
         final TrainSet set = consumer -> {
             for (double i = 0.; i <= 1.0; i += 0.2) {
@@ -96,6 +100,7 @@ public class TrainQuarters2 {
                     cnt.incrementAndGet();
                 });
                 out.println(format("epoch: %d" + "\tE: %.3f", i, error.doubleValue() / cnt.get()));
+                dump(weights);
             }
         }
         out.println(format("Timed\t%d", currentTimeMillis() - started));
