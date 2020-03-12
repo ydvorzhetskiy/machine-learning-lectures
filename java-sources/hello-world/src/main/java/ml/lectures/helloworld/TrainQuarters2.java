@@ -17,16 +17,16 @@ import static ml.lectures.helloworld.TrainCommon.BPOINTS;
 import static ml.lectures.helloworld.api.Utils.randomizeWeights;
 
 /**
- * TrainQuarters
+ * TrainQuarters2
  *
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
-public class TrainQuarters {
+public class TrainQuarters2 {
 
     public static void main(String[] args) {
 
         val net = new H1Net(new SigmoidMath(0.5, 1.0));
-        val weights = new ArrayWeights(2, 4, 2);
+        val weights = new ArrayWeights(2, 4, 1);
         randomizeWeights(weights);
 
         final TrainSet set = consumer -> {
@@ -60,16 +60,19 @@ public class TrainQuarters {
                 val r1 = net.test(weights, new double[] {0.25, 0.75});
                 val r2 = net.test(weights, new double[] {0.75, 0.75});
                 val r3 = net.test(weights, new double[] {0.75, 0.25});
-                out.println(format("epoch: %d" +
-                        "\t[0.25, 0.25]=[%.3f,%.3f]" +
-                        "\t[0.25, 0.75]=[%.3f,%.3f]" +
-                        "\t[0.75, 0.75]=[%.3f,%.3f]" +
-                        "\t[0.75, 0.25]=[%.3f,%.3f]",
+                out.println(
+                    format("epoch: %d" +
+                        "\t[0.25, 0.25]=[%.3f]" +
+                        "\t[0.25, 0.75]=[%.3f]" +
+                        "\t[0.75, 0.75]=[%.3f]" +
+                        "\t[0.75, 0.25]=[%.3f]",
                     i,
-                    r0[0], r0[1],
-                    r1[0], r1[1],
-                    r2[0], r2[1],
-                    r3[0], r3[1]));
+                    r0[0],
+                    r1[0],
+                    r2[0],
+                    r3[0]
+                    )
+                );
             }
         }
         out.println(format("Timed\t%d", currentTimeMillis() - started));
@@ -77,12 +80,12 @@ public class TrainQuarters {
     }
 
     //
-    //   0, 1  |   1, 1
+    //      0  |   1
     //   ------+-------
-    //   0, 0  |   1, 0
+    //      1  |   0
     //
     private static double[] quarter(final double i, final double j) {
 
-        return new double[] {i <= 0.5 ? 0 : 1, j <= 0.5 ? 0 : 1};
+        return new double[] {(i <= 0.5 && j <= 0.5) || (i >= 0.5 && j >= 0.5) ? 1 : 0};
     }
 }
