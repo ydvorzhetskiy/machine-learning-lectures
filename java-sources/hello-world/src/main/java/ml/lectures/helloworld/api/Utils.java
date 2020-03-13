@@ -2,7 +2,9 @@ package ml.lectures.helloworld.api;
 
 import lombok.val;
 
+import static java.lang.System.arraycopy;
 import static java.lang.System.out;
+import static java.util.Arrays.copyOf;
 
 
 /**
@@ -107,7 +109,80 @@ public final class Utils {
         }
     }
 
-    static double random() {
+    public static double[] array(final double... d) {
+        val res = new double[d.length];
+        arraycopy(d, 0, res, 0, d.length);
+        return res;
+    }
+    public static double random() {
         return Math.random();
     };
+
+    public static double[][] sum(final double[][] a, final double[][] b) {
+        val res = new double[a.length][];
+        for (int i = 0; i < a.length; i++) {
+            res[i] = new double[a[i].length];
+            for (int j = 0; j < a[i].length; j++) {
+                res[i][j] = a[i][j] + b[i][j];
+            }
+        }
+        return res;
+    }
+
+    public static double sum(final double[] arr) {
+        double res = 0.;
+        for (final double v : arr) {
+            res += v;
+        }
+        return res;
+    }
+
+    public static double[][] vec2matrix(final double[] v) {
+        val res = new double[1][];
+        res[0] = copyOf(v, v.length);
+        return res;
+    }
+
+    public static double[][] transpon(final double[] v) {
+        val res = new double[v.length][1];
+        for (int i = 0; i < v.length; i++) {
+            res[i][0] = v[i];
+        }
+        return res;
+    }
+
+    public static double[][] mult(final double[][] x, final double[][] y) {
+
+        val xl = x.length;
+        val yl = y.length;
+        val yw = y[0].length;
+        val res = new double[xl][yw];
+        for (int i = 0; i < xl; ++i) {
+            double[] c = res[i];
+            for (int j = 0; j < yw; ++j) {
+                c[j] = 0.;
+            }
+            for (int k = 0; k < yl; ++k) {
+                double[] b = y[k];
+                double a = x[i][k];
+                for (int j = 0; j < yw; ++j) {
+                    c[j] += a * b[j];
+                }
+            }
+        }
+        return res;
+    }
+
+    public static double[] mult(final double[] x, final double[][] y) {
+
+        return mult(vec2matrix(x), y)[0];
+    }
+
+    public static double[] add(final double[] x, final double[] y) {
+        val res = new double[x.length];
+        for (int i = 0; i < x.length; i++) {
+            res[i] = x[i] + y[i];
+        }
+        return res;
+    }
 }

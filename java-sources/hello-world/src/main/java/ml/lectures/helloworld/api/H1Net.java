@@ -4,6 +4,12 @@ import lombok.val;
 
 import java.util.function.Function;
 
+import static ml.lectures.helloworld.api.Utils.add;
+import static ml.lectures.helloworld.api.Utils.mult;
+import static ml.lectures.helloworld.api.Utils.sum;
+import static ml.lectures.helloworld.api.Utils.transpon;
+import static ml.lectures.helloworld.api.Utils.vec2matrix;
+
 /**
  * OneLayerMachine
  *
@@ -53,17 +59,9 @@ public class H1Net implements LNet {
 
     private void fixWeights(final Weights weights, final ArrayWeights deltas) {
 
-        for (int i = 0; i < weights.hsize(); i++) {
-            for (int j = 0; j < weights.isize(); j++) {
-                weights.i2h(j, i, weights.i2h(j, i) + deltas.i2h(j, i));
-            }
-            for (int j = 0; j < weights.bsize(); j++) {
-                weights.b2h(j, i, weights.b2h(j, i) + deltas.b2h(j, i));
-            }
-            for (int j = 0; j < weights.osize(); j++) {
-                weights.h2o(i, j, weights.h2o(i, j) + deltas.h2o(i, j));
-            }
-        }
+        weights.i2h(sum(weights.i2h(), deltas.i2h()));
+        weights.b2h(sum(weights.b2h(), deltas.b2h()));
+        weights.h2o(sum(weights.h2o(), deltas.h2o()));
     }
 
     private void forward(final double[] set,
@@ -77,25 +75,12 @@ public class H1Net implements LNet {
         val ol = layers.olayer();
         il.net(set);
 
-        for (int i = 0; i < il.size(); i++) {
-            for (int j = 0; j < hl.size(); j++) {
-                hl.net(j, hl.net(j) + il.out(i) * weights.i2h(i, j));
-            }
-        }
+        hl.net(
+            add(mult(il.out(), weights.i2h()),
+                mult(bl.out(), weights.b2h()))
+        );
 
-        for (int i = 0; i < bl.size(); i++) {
-            for (int j = 0; j < hl.size(); j++) {
-                hl.net(j, hl.net(j) + bl.out(i) * weights.b2h(i, j));
-            }
-        }
-
-        for (int i = 0; i < ol.size(); i++) {
-            double net = 0.;
-            for (int j = 0; j < hl.size(); j++) {
-                net += hl.out(j) * weights.h2o(j, i);
-            }
-            ol.net(i, net);
-        }
+        ol.net(mult(hl.out(), weights.h2o()));
     }
 
     private void backward(final Layers layers,
