@@ -2,10 +2,13 @@ package ml.lectures.helloworld.api;
 
 import lombok.val;
 
+import java.util.function.DoubleBinaryOperator;
 import java.util.function.Function;
 
 import static ml.lectures.helloworld.api.Utils.add;
+import static ml.lectures.helloworld.api.Utils.join;
 import static ml.lectures.helloworld.api.Utils.mult;
+import static ml.lectures.helloworld.api.Utils.operate;
 import static ml.lectures.helloworld.api.Utils.sum;
 import static ml.lectures.helloworld.api.Utils.transpon;
 import static ml.lectures.helloworld.api.Utils.vec2matrix;
@@ -93,21 +96,14 @@ public class H1Net implements LNet {
         val bl = layers.blayer();
         val ol = layers.olayer();
 
-        val odeltas = new double[deltas.osize()];
-        for (int i = 0; i < deltas.osize(); i++) {
-            odeltas[i] = math.doutput(ol.out(i), target[i]);
-        }
-
-        for (int i = 0; i < deltas.osize(); i++) {
-            for (int j = 0; j < deltas.hsize(); j++) {
-                deltas.h2o(j, i,
-                    math.dweight(
-                        math.gradient(hl.out(j), odeltas[i]),
-                        deltas.h2o(j, i)
-                    )
-                );
-            }
-        }
+        val doutputs = operate(ol.out(),target,math::doutput);
+        deltas.h2o(
+            operate(
+                join(hl.out(), doutputs, math::gradient),
+                deltas.h2o(),
+                math::dweight
+            )
+        );
 
         val hdeltas = new double[deltas.hsize()];
         for (int i = 0; i < deltas.hsize(); i++) {
@@ -115,7 +111,7 @@ public class H1Net implements LNet {
             val ds = new double[deltas.osize()];
             for (int j = 0; j < deltas.osize(); j++) {
                 ws[j] = weights.h2o(i, j);
-                ds[j] = odeltas[j];
+                ds[j] = doutputs[j];
             }
             hdeltas[i] = math.dneuron(hl.out(i), ws, ds);
         }
