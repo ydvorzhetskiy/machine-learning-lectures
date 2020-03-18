@@ -40,7 +40,7 @@ public class SigmoidMath implements LMath {
     }
 
     @Override
-    public double gradient(final double out, final double delta) {
+    public double grad(final double out, final double delta) {
 
         return out * delta;
     }
@@ -48,6 +48,7 @@ public class SigmoidMath implements LMath {
     /**
      * Delta for neuron:
      * H.delta = F'(IN) * SUM(Wi * OUT.delta)
+     * or F'(IN) * W1 * OUT.delta + F'(IN) * W2 * OUT.delta
      * F'(IN) = F.sigmoid = (1 - OUT) * OUT
      * @param out - OUT
      * @param weight - Wi
@@ -55,13 +56,19 @@ public class SigmoidMath implements LMath {
      * @return delta for outputs
      */
     @Override
-    public double dneuron(final double out, final double[] weight, final double[] delta) {
+    public double hdelta(final double out, final double[] weight, final double[] delta) {
 
         double sum = 0.;
         for (int i = 0; i < weight.length; i++) {
             sum += weight[i] * delta[i];
         }
         return (1 - out) * out * sum;
+    }
+
+    @Override
+    public double hdelta(final double out, final double weight, final double delta) {
+
+        return (1 - out) * out * weight * delta;
     }
 
     /**
@@ -73,8 +80,30 @@ public class SigmoidMath implements LMath {
      * @return delta for outputs
      */
     @Override
-    public double doutput(final double actual, final double ideal) {
+    public double odelta(final double actual, final double ideal) {
 
         return (ideal - actual) * (1 - actual) * actual;
+    }
+
+    /**
+     * Derivative for neuron (H-vertex):
+     * F'(IN)
+     * F'(IN) = F.sigmoid' = (1 - OUT) * OUT
+     * @param hout - H-vertex out
+     * @return Derivative for H-vertex
+     */
+    public double hder(final double hout) {
+        return (1 - hout) * hout;
+    }
+
+    /**
+     * H.delta = F'(IN) * SUM(Wi * OUT.delta)
+     * @param hder - F'(IN)
+     * @param dsum - SUM(Wi * OUT.delta)
+     * @return
+     */
+    public double hdelta(final double hder, final double dsum) {
+
+        return hder * dsum;
     }
 }

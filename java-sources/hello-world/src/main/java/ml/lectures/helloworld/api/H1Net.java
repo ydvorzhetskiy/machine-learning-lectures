@@ -2,7 +2,6 @@ package ml.lectures.helloworld.api;
 
 import lombok.val;
 
-import java.util.function.DoubleBinaryOperator;
 import java.util.function.Function;
 
 import static ml.lectures.helloworld.api.Utils.add;
@@ -10,8 +9,6 @@ import static ml.lectures.helloworld.api.Utils.join;
 import static ml.lectures.helloworld.api.Utils.mult;
 import static ml.lectures.helloworld.api.Utils.operate;
 import static ml.lectures.helloworld.api.Utils.sum;
-import static ml.lectures.helloworld.api.Utils.transpon;
-import static ml.lectures.helloworld.api.Utils.vec2matrix;
 
 /**
  * OneLayerMachine
@@ -96,10 +93,10 @@ public class H1Net implements LNet {
         val bl = layers.blayer();
         val ol = layers.olayer();
 
-        val doutputs = operate(ol.out(),target,math::doutput);
+        val errs = operate(ol.out(), target, math::odelta);
         deltas.h2o(
             operate(
-                join(hl.out(), doutputs, math::gradient),
+                join(hl.out(), errs, math::grad),
                 deltas.h2o(),
                 math::dweight
             )
@@ -107,19 +104,15 @@ public class H1Net implements LNet {
 
         val hdeltas = new double[deltas.hsize()];
         for (int i = 0; i < deltas.hsize(); i++) {
-            val ws = new double[deltas.osize()];
-            val ds = new double[deltas.osize()];
             for (int j = 0; j < deltas.osize(); j++) {
-                ws[j] = weights.h2o(i, j);
-                ds[j] = doutputs[j];
+                hdeltas[i] += math.hdelta(hl.out(i), weights.h2o(i, j), errs[j]);
             }
-            hdeltas[i] = math.dneuron(hl.out(i), ws, ds);
         }
 
         for (int i = 0; i < deltas.hsize(); i++) {
             for (int j = 0; j < deltas.isize(); j++) {
                 deltas.i2h(j, i,
-                    math.dweight(math.gradient(il.out(j), hdeltas[i]), deltas.i2h(j, i))
+                    math.dweight(math.grad(il.out(j), hdeltas[i]), deltas.i2h(j, i))
                 );
             }
         }
@@ -127,9 +120,31 @@ public class H1Net implements LNet {
         for (int i = 0; i < deltas.hsize(); i++) {
             for (int j = 0; j < deltas.bsize(); j++) {
                 deltas.b2h(j, i,
-                    math.dweight(math.gradient(bl.out(j), hdeltas[i]), deltas.b2h(j, i))
+                    math.dweight(math.grad(bl.out(j), hdeltas[i]), deltas.b2h(j, i))
                 );
             }
         }
     }
+
+    /*
+
+    Mind.prototype.back = function(examples, results) {
+  var activatePrime = this.activatePrime;
+  var learningRate = this.learningRate;
+  var weights = this.weights;
+
+  // compute weight adjustments
+  var errorOutputLayer = subtract(examples.output, results.outputResult);
+  var deltaOutputLayer = dot(results.outputSum.transform(activatePrime), errorOutputLayer);
+  var hiddenOutputChanges = scalar(multiply(deltaOutputLayer, results.hiddenResult.transpose()), learningRate);
+  var deltaHiddenLayer = dot(multiply(weights.hiddenOutput.transpose(), deltaOutputLayer), results.hiddenSum.transform(activatePrime));
+  var inputHiddenChanges = scalar(multiply(deltaHiddenLayer, examples.input.transpose()), learningRate);
+
+  // adjust weights
+  weights.inputHidden = add(weights.inputHidden, inputHiddenChanges);
+  weights.hiddenOutput = add(weights.hiddenOutput, hiddenOutputChanges);
+
+  return errorOutputLayer;
+};
+    */
 }

@@ -27,7 +27,7 @@ public interface LMath {
      * @param out - actual output
      * @return delta for outputs
      */
-    double gradient(double out, double delta);
+    double grad(double out, double delta);
 
     /**
      * Delta for neuron:
@@ -36,9 +36,20 @@ public interface LMath {
      * @param delta - OUT.delta
      * @return delta for outputs
      */
-    double dneuron(double out,
-                   double[] weight,
-                   double[] delta);
+    double hdelta(double out,
+                  double[] weight,
+                  double[] delta);
+
+    /**
+     * Delta for neuron:
+     * @param out - OUT
+     * @param weight - Wi
+     * @param delta - OUT.delta
+     * @return delta for outputs
+     */
+    double hdelta(double out,
+                  double weight,
+                  double delta);
 
     /**
      * Delta for outputs:
@@ -46,5 +57,5 @@ public interface LMath {
      * @param ideal - ideal value
      * @return delta for outputs
      */
-    double doutput(double actual, double ideal);
+    double odelta(double actual, double ideal);
 }
