@@ -2,7 +2,7 @@ package ml.lectures.helloworld.api;
 
 import org.testng.annotations.Test;
 
-import static ml.lectures.helloworld.api.Utils.evector;
+import static ml.lectures.helloworld.api.Utils.ecolumn;
 import static ml.lectures.helloworld.api.Utils.mult;
 import static ml.lectures.helloworld.api.Utils.transpon;
 import static org.testng.Assert.assertEquals;
@@ -30,7 +30,7 @@ public class UtilsTest {
 
         arr = mult(
             new double[][] {
-                evector(2)
+                ecolumn(2)
             },
             new double[][] {
                 {7, 8, 9},
@@ -42,7 +42,7 @@ public class UtilsTest {
         assertEquals(arr[0][2], 21.0);
 
         arr = mult(
-            transpon(evector(2)),
+            transpon(ecolumn(2)),
             new double[][] {
                 {7, 8, 9}
             }

@@ -17,6 +17,10 @@ import static java.util.Arrays.fill;
  */
 public final class Utils {
 
+    public static final DoubleBinaryOperator mulop = (left, right) -> left * right;
+    public static final DoubleBinaryOperator sumop = Double::sum;
+    public static final DoubleBinaryOperator difop = (left, right) -> left - right;
+
     public static void dump(final Weights weights) {
 
         val buf = new StringBuilder();
@@ -187,7 +191,7 @@ public final class Utils {
         return res;
     }
 
-    public static double[] evector(int size) {
+    public static double[] ecolumn(int size) {
         val res = new double[size];
         fill(res, 1.);
         return res;
@@ -240,7 +244,7 @@ public final class Utils {
         return res;
     }
 
-    public static double[][] columnv(final double[] a) {
+    public static double[][] column(final double[] a) {
 
         val res = new double[a.length][1];
         for (int i = 0; i < a.length; i++) {
@@ -249,7 +253,17 @@ public final class Utils {
         return res;
     }
 
-    public static double[] rowv(final double[][] a, int index) {
+    public static double[] row(final double[][] a, int index) {
+
+        val res = new double[a.length];
+        for (int i = 0; i < a.length; i++) {
+            res[i] = a[i][index];
+        }
+        return res;
+    }
+
+
+    public static double[] column(final double[][] a, int index) {
 
         val res = new double[a.length];
         for (int i = 0; i < a.length; i++) {

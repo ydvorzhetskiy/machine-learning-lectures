@@ -51,6 +51,9 @@ public interface LMath {
                   double weight,
                   double delta);
 
+    double hdelta(double out,
+                  double sum);
+
     /**
      * Delta for outputs:
      * @param actual - actual value

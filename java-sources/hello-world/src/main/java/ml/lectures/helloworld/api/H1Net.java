@@ -5,7 +5,9 @@ import lombok.val;
 import java.util.function.Function;
 
 import static ml.lectures.helloworld.api.Utils.add;
+import static ml.lectures.helloworld.api.Utils.column;
 import static ml.lectures.helloworld.api.Utils.join;
+import static ml.lectures.helloworld.api.Utils.mulop;
 import static ml.lectures.helloworld.api.Utils.mult;
 import static ml.lectures.helloworld.api.Utils.operate;
 import static ml.lectures.helloworld.api.Utils.sum;
@@ -96,34 +98,36 @@ public class H1Net implements LNet {
         val errs = operate(ol.out(), target, math::odelta);
         deltas.h2o(
             operate(
-                join(hl.out(), errs, math::grad),
+                join(hl.out(), errs, mulop),
                 deltas.h2o(),
                 math::dweight
             )
         );
 
-        val hdeltas = new double[deltas.hsize()];
-        for (int i = 0; i < deltas.hsize(); i++) {
-            for (int j = 0; j < deltas.osize(); j++) {
-                hdeltas[i] += math.hdelta(hl.out(i), weights.h2o(i, j), errs[j]);
-            }
-        }
+        val hdeltas = column(
+            operate(
+                column(hl.out()),
+                mult(weights.h2o(), column(errs)),
+                math::hdelta
+            ),
+            0
+        );
 
-        for (int i = 0; i < deltas.hsize(); i++) {
-            for (int j = 0; j < deltas.isize(); j++) {
-                deltas.i2h(j, i,
-                    math.dweight(math.grad(il.out(j), hdeltas[i]), deltas.i2h(j, i))
-                );
-            }
-        }
+        deltas.i2h(
+            operate(
+                join(il.out(), hdeltas, mulop),
+                deltas.i2h(),
+                math::dweight
+            )
+        );
 
-        for (int i = 0; i < deltas.hsize(); i++) {
-            for (int j = 0; j < deltas.bsize(); j++) {
-                deltas.b2h(j, i,
-                    math.dweight(math.grad(bl.out(j), hdeltas[i]), deltas.b2h(j, i))
-                );
-            }
-        }
+        deltas.b2h(
+            operate(
+                join(bl.out(), hdeltas, mulop),
+                deltas.b2h(),
+                math::dweight
+            )
+        );
     }
 
     /*

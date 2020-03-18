@@ -65,6 +65,8 @@ public class SigmoidMath implements LMath {
         return (1 - out) * out * sum;
     }
 
+
+
     @Override
     public double hdelta(final double out, final double weight, final double delta) {
 
@@ -98,12 +100,12 @@ public class SigmoidMath implements LMath {
 
     /**
      * H.delta = F'(IN) * SUM(Wi * OUT.delta)
-     * @param hder - F'(IN)
+     * @param out - F'(IN)
      * @param dsum - SUM(Wi * OUT.delta)
      * @return
      */
-    public double hdelta(final double hder, final double dsum) {
+    public double hdelta(final double out, final double dsum) {
 
-        return hder * dsum;
+        return (1 - out) * out * dsum;
     }
 }
