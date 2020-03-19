@@ -2,9 +2,8 @@ package ml.lectures.helloworld.api;
 
 import org.testng.annotations.Test;
 
-import static ml.lectures.helloworld.api.Utils.ecolumn;
-import static ml.lectures.helloworld.api.Utils.mult;
-import static ml.lectures.helloworld.api.Utils.transpon;
+import static ml.lectures.helloworld.api.Utils.ecol;
+import static ml.lectures.helloworld.api.Utils.mul;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -16,7 +15,7 @@ public class UtilsTest {
 
     @Test
     public void testMult() {
-        double[][] arr = mult(
+        double[][] arr = mul(
             new double[][] {
                 {1, 2}, {3, 4}, {5, 6}
             },
@@ -28,9 +27,9 @@ public class UtilsTest {
         assertEquals(arr[0][0], 27.0);
         assertEquals(arr[2][2], 117.0);
 
-        arr = mult(
+        arr = mul(
             new double[][] {
-                ecolumn(2)
+                ecol(2)
             },
             new double[][] {
                 {7, 8, 9},
@@ -41,16 +40,5 @@ public class UtilsTest {
         assertEquals(arr[0][0], 17.0);
         assertEquals(arr[0][2], 21.0);
 
-        arr = mult(
-            transpon(ecolumn(2)),
-            new double[][] {
-                {7, 8, 9}
-            }
-        );
-
-        assertEquals(arr[0][0], 7.0);
-        assertEquals(arr[0][2], 9.0);
-        assertEquals(arr[1][0], 7.0);
-        assertEquals(arr[1][2], 9.0);
     }
 }

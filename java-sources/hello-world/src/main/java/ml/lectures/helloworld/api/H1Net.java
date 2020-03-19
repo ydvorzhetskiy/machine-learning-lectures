@@ -4,17 +4,18 @@ import lombok.val;
 
 import java.util.function.Function;
 
-import static ml.lectures.helloworld.api.Utils.add;
 import static ml.lectures.helloworld.api.Utils.column;
-import static ml.lectures.helloworld.api.Utils.join;
-import static ml.lectures.helloworld.api.Utils.mulop;
-import static ml.lectures.helloworld.api.Utils.mult;
-import static ml.lectures.helloworld.api.Utils.operate;
+import static ml.lectures.helloworld.api.Utils.mul;
+import static ml.lectures.helloworld.api.Utils.oper;
+import static ml.lectures.helloworld.api.Utils.row;
 import static ml.lectures.helloworld.api.Utils.sum;
+import static ml.lectures.helloworld.api.Utils.tran;
 
 /**
  * OneLayerMachine
- *
+ * Expected results for xors
+ * 6.008	0.771	-5.498	1.527	2.296	1.378	-8.862	4.210
+ * epoch: 5000	error:	0.000
  * @author <a href="mailto:oslautin@luxoft.com">Oleg N.Slautin</a>
  */
 public class H1Net implements LNet {
@@ -73,16 +74,17 @@ public class H1Net implements LNet {
         layers.clean();
         val il = layers.ilayer();
         val hl = layers.hlayer();
-        val bl = layers.blayer();
         val ol = layers.olayer();
+
         il.net(set);
 
-        hl.net(
-            add(mult(il.out(), weights.i2h()),
-                mult(bl.out(), weights.b2h()))
-        );
+        val hout = row(hl.out());
+        val iout = row(il.out());
+        val bout = row(layers.blayer().out());
 
-        ol.net(mult(hl.out(), weights.h2o()));
+        hl.net(row(sum(mul(iout, weights.i2h()), mul(bout, weights.b2h())),0));
+
+        ol.net(row(mul(hout, weights.h2o()),0));
     }
 
     private void backward(final Layers layers,
@@ -90,65 +92,16 @@ public class H1Net implements LNet {
                           final Weights deltas,
                           final double[] target) {
 
-        val il = layers.ilayer();
-        val hl = layers.hlayer();
-        val bl = layers.blayer();
-        val ol = layers.olayer();
+        val hout = column(layers.hlayer().out());
+        val iout = column(layers.ilayer().out());
+        val bout = column(layers.blayer().out());
+        val oout = column(layers.olayer().out());
 
-        val errs = operate(ol.out(), target, math::odelta);
-        deltas.h2o(
-            operate(
-                join(hl.out(), errs, mulop),
-                deltas.h2o(),
-                math::dweight
-            )
-        );
+        val errs = oper(oout, column(target), math::odelta);
 
-        val hdeltas = column(
-            operate(
-                column(hl.out()),
-                mult(weights.h2o(), column(errs)),
-                math::hdelta
-            ),
-            0
-        );
-
-        deltas.i2h(
-            operate(
-                join(il.out(), hdeltas, mulop),
-                deltas.i2h(),
-                math::dweight
-            )
-        );
-
-        deltas.b2h(
-            operate(
-                join(bl.out(), hdeltas, mulop),
-                deltas.b2h(),
-                math::dweight
-            )
-        );
+        deltas.h2o(oper(mul(hout, errs), deltas.h2o(), math::dweight));
+        val dhs = tran(oper(hout, mul(weights.h2o(), errs), math::hdelta));
+        deltas.i2h(oper(mul(iout, dhs), deltas.i2h(), math::dweight));
+        deltas.b2h(oper(mul(bout, dhs), deltas.b2h(), math::dweight));
     }
-
-    /*
-
-    Mind.prototype.back = function(examples, results) {
-  var activatePrime = this.activatePrime;
-  var learningRate = this.learningRate;
-  var weights = this.weights;
-
-  // compute weight adjustments
-  var errorOutputLayer = subtract(examples.output, results.outputResult);
-  var deltaOutputLayer = dot(results.outputSum.transform(activatePrime), errorOutputLayer);
-  var hiddenOutputChanges = scalar(multiply(deltaOutputLayer, results.hiddenResult.transpose()), learningRate);
-  var deltaHiddenLayer = dot(multiply(weights.hiddenOutput.transpose(), deltaOutputLayer), results.hiddenSum.transform(activatePrime));
-  var inputHiddenChanges = scalar(multiply(deltaHiddenLayer, examples.input.transpose()), learningRate);
-
-  // adjust weights
-  weights.inputHidden = add(weights.inputHidden, inputHiddenChanges);
-  weights.hiddenOutput = add(weights.hiddenOutput, hiddenOutputChanges);
-
-  return errorOutputLayer;
-};
-    */
 }
