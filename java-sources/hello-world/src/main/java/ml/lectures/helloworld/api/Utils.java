@@ -16,9 +16,7 @@ import static java.util.Arrays.fill;
  */
 public final class Utils {
 
-    public static final DoubleBinaryOperator mulop = (left, right) -> left * right;
-    public static final DoubleBinaryOperator sumop = Double::sum;
-    public static final DoubleBinaryOperator difop = (left, right) -> left - right;
+    public static final DoubleBinaryOperator SUMOP = Double::sum;
 
     public static void dump(final Weights weights) {
 
@@ -115,14 +113,9 @@ public final class Utils {
         }
     }
 
-    public static double[] array(final double... d) {
-        val res = new double[d.length];
-        arraycopy(d, 0, res, 0, d.length);
-        return res;
-    }
     public static double random() {
         return Math.random();
-    };
+    }
 
     public static double sum(final double[] arr) {
         double res = 0.;
@@ -166,22 +159,8 @@ public final class Utils {
     public static double[][] sum(final double[][] a,
                                  final double[][] b) {
 
-        return oper(a, b, sumop);
+        return oper(a, b, SUMOP);
     }
-
-//    public static double[] mul(final double[] x, final double[][] y) {
-//
-//        return mul(vec2matrix(x), y)[0];
-//    }
-
-//    public static double[] add(final double[] x, final double[] y) {
-//
-//        val res = new double[x.length];
-//        for (int i = 0; i < x.length; i++) {
-//            res[i] = x[i] + y[i];
-//        }
-//        return res;
-//    }
 
     public static double[] ecol(int size) {
         val res = new double[size];
@@ -204,32 +183,7 @@ public final class Utils {
         return res;
     }
 
-//    public static double[] fori(final double[] a,
-//                                final double[] b,
-//                                final DoubleBinaryOperator operator) {
-//
-//        val x = a.length;
-//        val res = new double[x];
-//        for (int i = 0; i < x; i++) {
-//            res[i] = operator.applyAsDouble(a[i], b[i]);
-//        }
-//        return res;
-//    }
-
-    public static double[][] join(final double[] a,
-                                  final double[] b,
-                                  final DoubleBinaryOperator operator) {
-
-        val res = new double[a.length][b.length];
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < b.length; j++) {
-                res[i][j] = operator.applyAsDouble(a[i], b[j]);
-            }
-        }
-        return res;
-    }
-
-    public static double[][] column(final double[] a) {
+    public static double[][] col(final double[] a) {
 
         val res = new double[a.length][1];
         for (int i = 0; i < a.length; i++) {
@@ -241,9 +195,7 @@ public final class Utils {
     public static double[][] row(final double[] a) {
 
         val res = new double[1][a.length];
-        for (int i = 0; i < a.length; i++) {
-            res[0][i] = a[i];
-        }
+        arraycopy(a, 0, res[0], 0, a.length);
         return res;
     }
 
@@ -254,7 +206,7 @@ public final class Utils {
     }
 
 
-    public static double[] column(final double[][] a, int index) {
+    public static double[] col(final double[][] a, int index) {
 
         val res = new double[a.length];
         for (int i = 0; i < a.length; i++) {

@@ -4,7 +4,7 @@ import lombok.val;
 
 import java.util.function.Function;
 
-import static ml.lectures.helloworld.api.Utils.column;
+import static ml.lectures.helloworld.api.Utils.col;
 import static ml.lectures.helloworld.api.Utils.mul;
 import static ml.lectures.helloworld.api.Utils.oper;
 import static ml.lectures.helloworld.api.Utils.row;
@@ -101,15 +101,16 @@ public class H1Net implements LNet {
                           final Weights deltas,
                           final double[] target) {
 
-        val hout = column(layers.hlayer().out());
-        val iout = column(layers.ilayer().out());
-        val bout = column(layers.blayer().out());
-        val oout = column(layers.olayer().out());
+        val hout = col(layers.hlayer().out());
+        val iout = col(layers.ilayer().out());
+        val bout = col(layers.blayer().out());
+        val oout = col(layers.olayer().out());
 
-        val errs = oper(oout, column(target), math::odelta);
+        val errs = oper(oout, col(target), math::odelta);
 
         deltas.h2o(oper(mul(hout, errs), deltas.h2o(), math::dweight));
         val dhs = tran(oper(hout, mul(weights.h2o(), errs), math::hdelta));
+
         deltas.i2h(oper(mul(iout, dhs), deltas.i2h(), math::dweight));
         deltas.b2h(oper(mul(bout, dhs), deltas.b2h(), math::dweight));
     }

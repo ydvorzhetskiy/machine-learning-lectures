@@ -7,6 +7,7 @@ import ml.lectures.helloworld.api.SigmoidMath;
 import java.util.function.Function;
 
 import static ml.lectures.helloworld.TrainCommon.BPOINTS;
+import static ml.lectures.helloworld.TrainCommon.trainSet;
 import static ml.lectures.helloworld.api.Utils.xor;
 
 /**
@@ -21,6 +22,6 @@ public class TrainXors {
         val net = new H1Net(new SigmoidMath(1.8, 0.8));
         val weights = TrainCommon.weights();
         final Function<double[], Double> fun = i -> xor(i[0], i[1]);
-        TrainCommon.train(net, BPOINTS, TrainCommon.trainSet(fun), weights, 10_000, fun);
+        TrainCommon.train(net, BPOINTS, trainSet(fun), weights, 10_000, fun);
     }
 }
