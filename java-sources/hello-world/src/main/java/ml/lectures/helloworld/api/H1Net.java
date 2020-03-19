@@ -74,17 +74,26 @@ public class H1Net implements LNet {
         layers.clean();
         val il = layers.ilayer();
         val hl = layers.hlayer();
+        val bl = layers.blayer();
         val ol = layers.olayer();
-
         il.net(set);
 
-        val hout = row(hl.out());
-        val iout = row(il.out());
-        val bout = row(layers.blayer().out());
+        hl.net(
+            row(
+                sum(
+                    mul(row(il.out()), weights.i2h()),
+                    mul(row(bl.out()), weights.b2h())
+                ),
+                0
+            )
+        );
 
-        hl.net(row(sum(mul(iout, weights.i2h()), mul(bout, weights.b2h())),0));
-
-        ol.net(row(mul(hout, weights.h2o()),0));
+        ol.net(
+            row(
+                mul(row(hl.out()), weights.h2o()),
+                0
+            )
+        );
     }
 
     private void backward(final Layers layers,
